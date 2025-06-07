@@ -1,0 +1,45 @@
+<div class="cart-payment">
+    <button class="btn btn-success checkout-btn">Proceed to Payment (₹{{ cart.total_price }})</button>
+    
+    <script>
+    document.querySelector('.checkout-btn').addEventListener('click', function() {
+        fetch('/payment/process/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const options = {
+                    "key": data.razorpay_key,
+                    "amount": data.amount,
+                    "currency": data.currency,
+                    "name": "Your Store",
+                    "description": "Cart Checkout",
+                    "order_id": data.order_id,
+                    "handler": function(response) {
+                        verifyPayment(response);
+                    },
+                    "prefill": {
+                        "name": data.user.name,
+                        "email": data.user.email
+                    }
+                };
+                
+                const rzp = new Razorpay(options);
+                rzp.open();
+            } else {
+                alert('Error: ' + data.error);
+            }
+        });
+    });
+    
+    function verifyPayment(response) {
+        // Same verification as above
+    }
+    </script>
+</div>

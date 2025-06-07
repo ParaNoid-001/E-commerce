@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About Us - MVP Automotive{% endblock title %}
+
+{% block content %}
+<div class="about-page">
+  <!-- Hero Section -->
+  <section class="about-hero py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{% static 'images/auto_industry_community.jpg' %}') center/cover;">
+    <div class="container text-center text-white">
+      <h1 class="display-4 fw-bold mb-4">About Our Automotive Community</h1>
+      <p class="lead">Car enthusiasts are our passion—it's what drives us every day.</p>
+    </div>
+  </section>
+
+  <!-- Who We Are -->
+  <section class="py-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+          <h2 class="mb-4 fw-bold">Who We Are</h2>
+          <p class="lead">We're a community built by and for automotive experts.</p>
+          <p>The mechanics who spend weekends restoring classic cars but appreciate the simplicity of modern diagnostics too. The tuners who squeeze every last horsepower from an engine but understand the value of reliability. The enthusiasts who want performance without sacrificing daily drivability.</p>
+          <p>Most importantly, we connect automotive enthusiasts with their greatest sources of inspiration—other passionate gearheads.</p>
+          <a href="{% url 'register' %}" class="btn btn-primary mt-3">Join Our Community</a>
+        </div>
+        <div class="col-lg-6">
+          <img src="{% static 'images/who are we.avif' %}" alt="Community of car enthusiasts" class="img-fluid rounded shadow-lg" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our History -->
+  <section class="bg-light py-5">
+    <div class="container">
+      <h2 class="text-center mb-5 fw-bold">Our Journey</h2>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="display-4 text-primary mb-3 fw-bold">2005</div>
+              <h3 class="fw-bold">Founded</h3>
+              <p>Started as a small forum for local car enthusiasts to share repair tips.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="display-4 text-primary mb-3 fw-bold">2012</div>
+              <h3 class="fw-bold">Community Grows</h3>
+              <p>Launched our parts marketplace with 100+ trusted suppliers.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="display-4 text-primary mb-3 fw-bold">Today</div>
+              <h3 class="fw-bold">Thriving Platform</h3>
+              <p>Millions of parts listed and thousands of repair guides shared worldwide.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Values -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-5 fw-bold">Our Core Values</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="p-4 text-center bg-white rounded shadow-sm h-100">
+            <i class="fas fa-users text-primary display-4 mb-3"></i>
+            <h3 class="fw-bold">Community</h3>
+            <p>We believe in the power of shared knowledge and helping fellow enthusiasts.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-4 text-center bg-white rounded shadow-sm h-100">
+            <i class="fas fa-medal text-primary display-4 mb-3"></i>
+            <h3 class="fw-bold">Quality</h3>
+            <p>Only the best parts and most reliable information make it to our platform.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-4 text-center bg-white rounded shadow-sm h-100">
+            <i class="fas fa-lightbulb text-primary display-4 mb-3"></i>
+            <h3 class="fw-bold">Innovation</h3>
+            <p>We're always finding new ways to serve the automotive community better.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-4 text-center bg-white rounded shadow-sm h-100">
+            <i class="fas fa-hands-helping text-primary display-4 mb-3"></i>
+            <h3 class="fw-bold">Support</h3>
+            <p>From novice to expert, we're here to help with your automotive journey.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-4 text-center bg-white rounded shadow-sm h-100">
+            <i class="fas fa-car text-primary display-4 mb-3"></i>
+            <h3 class="fw-bold">Passion</h3>
+            <p>Our love for everything automotive drives everything we do.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-4 text-center bg-white rounded shadow-sm h-100">
+            <i class="fas fa-graduation-cap text-primary display-4 mb-3"></i>
+            <h3 class="fw-bold">Education</h3>
+            <p>We empower enthusiasts with knowledge to work on their own vehicles.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Community Stats -->
+  <section class="bg-primary text-white py-5">
+    <div class="container text-center">
+      <h2 class="mb-5 fw-bold">Our Community Impact</h2>
+      <div class="row">
+        <div class="col-md-3 col-6 mb-4">
+          <div class="display-4 fw-bold" data-count="500000">0</div>
+          <p>Active Members</p>
+        </div>
+        <div class="col-md-3 col-6 mb-4">
+          <div class="display-4 fw-bold" data-count="10000">0</div>
+          <p>Parts Listed</p>
+        </div>
+        <div class="col-md-3 col-6 mb-4">
+          <div class="display-4 fw-bold" data-count="5000">0</div>
+          <p>Repair Guides</p>
+        </div>
+        <div class="col-md-3 col-6 mb-4">
+          <div class="display-4 fw-bold" data-count="50">0</div>
+          <p>Countries</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-5 fw-bold">The Driving Force</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm h-100">
+            <img src="{% static 'images/team1.jpg' %}" class="card-img-top" alt="Team member" loading="lazy">
+            <div class="card-body">
+              <h3 class="fw-bold">Alex Johnson</h3>
+              <p class="text-muted">CEO & Founder</p>
+              <p>Former race mechanic with 20+ years experience in the automotive industry.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm h-100">
+            <img src="{% static 'images/team2.avif' %}" class="card-img-top" alt="Team member" loading="lazy">
+            <div class="card-body">
+              <h3 class="fw-bold">Sarah Williams</h3>
+              <p class="text-muted">Head of Parts</p>
+              <p>Ensures only the highest quality components make it to our marketplace.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm h-100">
+            <img src="{% static 'images/team3.jpg' %}" class="card-img-top" alt="Team member" loading="lazy">
+            <div class="card-body">
+              <h3 class="fw-bold">Mike Chen</h3>
+              <p class="text-muted">Tech Director</p>
+              <p>Builds the platforms that keep our community connected worldwide.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-5">
+        <a href="/careers" class="btn btn-outline-primary btn-lg">Join Our Team</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact CTA -->
+  <section class="bg-light py-5">
+    <div class="container text-center">
+      <h2 class="mb-4 fw-bold">Have Questions?</h2>
+      <p class="lead mb-4">We're here to help with all your automotive needs.</p>
+      <a href="{% url 'contact_view' %}" class="btn btn-primary btn-lg px-4">Contact Our Team</a>
+    </div>
+  </section>
+</div>
+
+<style>
+  /* About Page Styles */
+  .about-hero {
+    padding: 6rem 0;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  
+  .about-hero h1 {
+    font-size: 3.5rem;
+  }
+  
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  }
+  
+  /* Stats counter animation */
+  [data-count] {
+    transition: all 0.5s ease;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .about-hero h1 {
+      font-size: 2.5rem;
+    }
+    
+    .display-4 {
+      font-size: 2.5rem;
+    }
+  }
+</style>
+
+<script>
+  // Animate stats counter
+  document.addEventListener('DOMContentLoaded', function() {
+    const counters = document.querySelectorAll('[data-count]');
+    const speed = 200;
+    
+    counters.forEach(counter => {
+      const target = +counter.getAttribute('data-count');
+      const count = +counter.innerText;
+      const increment = target / speed;
+      
+      if(count < target) {
+        counter.innerText = Math.ceil(count + increment);
+        setTimeout(updateCount, 1);
+      } else {
+        counter.innerText = target.toLocaleString();
+      }
+      
+      function updateCount() {
+        const count = +counter.innerText.replace(/,/g, '');
+        if(count < target) {
+          counter.innerText = Math.ceil(count + increment).toLocaleString();
+          setTimeout(updateCount, 1);
+        } else {
+          counter.innerText = target.toLocaleString();
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

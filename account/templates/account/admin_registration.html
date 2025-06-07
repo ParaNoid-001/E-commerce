@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperUser Creation | Admin Registration</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Nunito -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Jazzmin-inspired styles -->
+    <style>
+        :root {
+            --primary: #4e73df;
+            --primary-dark: #3756b5;
+            --secondary: #858796;
+            --success: #1cc88a;
+            --info: #36b9cc;
+            --warning: #f6c23e;
+            --danger: #e74a3b;
+            --light: #f8f9fc;
+            --dark: #5a5c69;
+            --sidebar: #343a40;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            min-height: 100vh;
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            padding: 5rem 0;
+        }
+        
+        .registration-container {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .registration-card {
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.3rem 1.5rem 0 rgba(58, 59, 69, 0.2);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .registration-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 2rem 0 rgba(58, 59, 69, 0.25);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            border-bottom: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+        
+        .card-header h3 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            font-size: 1.75rem;
+        }
+        
+        .card-header p {
+            opacity: 0.9;
+            margin-bottom: 0;
+            font-size: 1rem;
+            position: relative;
+        }
+        
+        .card-body {
+            padding: 2.5rem;
+            background-color: white;
+        }
+        
+        .form-control {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d3e2;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.15);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            padding: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 0.25rem 0.75rem rgba(78, 115, 223, 0.3);
+        }
+        
+        .form-label {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .invalid-feedback {
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+            color: var(--danger);
+        }
+        
+        .text-muted {
+            font-size: 0.85rem;
+            color: var(--secondary) !important;
+        }
+        
+        .form-group {
+            margin-bottom: 1.75rem;
+        }
+        
+        .brand-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.25rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .alert {
+            border-radius: 0.5rem;
+            padding: 1rem 1.25rem;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 3rem 1rem;
+            }
+            
+            .card-body {
+                padding: 1.75rem;
+            }
+            
+            .card-header {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="registration-container">
+                <div class="registration-card">
+                    <div class="card-header">
+                        <div class="brand-icon">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <h3>SUPERUSER CREATION</h3>
+                        <p>Create the administrator account for the system</p>
+                    </div>
+                    
+                    <div class="card-body">
+                        {% if messages %}
+                            {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} me-2"></i>
+                                    <div>{{ message }}</div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                        
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <!-- Full Name -->
+                            <div class="form-group">
+                                <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                                <div class="invalid-feedback" id="name_error"></div>
+                            </div>
+                            
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                                <div class="invalid-feedback" id="email_error"></div>
+                            </div>
+                            
+                            <!-- Password -->
+                            <div class="form-group">
+                                <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                                <div class="text-muted mt-1">Minimum 8 characters with at least one number and special character</div>
+                                <div class="invalid-feedback" id="password_error"></div>
+                            </div>
+                            
+                            <div class="row">
+                                <!-- Date of Birth -->
+                                <div class="col-md-6 form-group">
+                                    <label for="dob" class="form-label">Date of Birth</label>
+                                    <input type="date" class="form-control" id="dob" name="dob">
+                                </div>
+                                
+                                <!-- Gender -->
+                                <div class="col-md-6 form-group">
+                                    <label for="gender" class="form-label">Gender</label>
+                                    <select class="form-select" id="gender" name="gender">
+                                        <option value="" selected disabled>Select Gender</option>
+                                        {% for value, label in gender_choices %}
+                                            <option value="{{ value }}">{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Phone Number -->
+                            <div class="form-group">
+                                <label for="phone_number" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone_number" name="phone_number">
+                                <div class="invalid-feedback" id="phone_number_error"></div>
+                            </div>
+                            
+                            <!-- Address -->
+                            <div class="form-group">
+                                <label for="address" class="form-label">Address</label>
+                                <textarea class="form-control" id="address" name="address" rows="2"></textarea>
+                                <div class="invalid-feedback" id="address_error"></div>
+                            </div>
+                            
+                            <!-- Profile Picture -->
+                            <div class="form-group">
+                                <label for="profile_picture" class="form-label">Profile Picture</label>
+                                <input class="form-control" type="file" id="profile_picture" name="profile_picture" accept="image/*">
+                                <div class="invalid-feedback" id="profile_picture_error"></div>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <div class="form-group mt-5">
+                                <button type="submit" class="btn btn-primary w-100 py-3">
+                                    <i class="fas fa-user-plus me-2"></i> CREATE SUPERUSER ACCOUNT
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Form Validation -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const requiredFields = ['name', 'email', 'password'];
+            
+            // Password validation regex
+            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+            
+            // Email validation regex
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            // Phone validation regex (basic)
+            const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/;
+            
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                
+                // Validate required fields
+                requiredFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    const errorElement = document.getElementById(`${fieldId}_error`);
+                    
+                    if (!field.value.trim()) {
+                        field.classList.add('is-invalid');
+                        errorElement.textContent = 'This field is required';
+                        isValid = false;
+                    } else {
+                        field.classList.remove('is-invalid');
+                        errorElement.textContent = '';
+                    }
+                });
+                
+                // Validate email format
+                const emailField = document.getElementById('email');
+                const emailError = document.getElementById('email_error');
+                if (emailField.value && !emailRegex.test(emailField.value)) {
+                    emailField.classList.add('is-invalid');
+                    emailError.textContent = 'Please enter a valid email address';
+                    isValid = false;
+                }
+                
+                // Validate password strength
+                const passwordField = document.getElementById('password');
+                const passwordError = document.getElementById('password_error');
+                if (passwordField.value && !passwordRegex.test(passwordField.value)) {
+                    passwordField.classList.add('is-invalid');
+                    passwordError.textContent = 'Password must be at least 8 characters with at least one number and special character';
+                    isValid = false;
+                }
+                
+                // Validate phone number if provided
+                const phoneField = document.getElementById('phone_number');
+                const phoneError = document.getElementById('phone_number_error');
+                if (phoneField.value && !phoneRegex.test(phoneField.value)) {
+                    phoneField.classList.add('is-invalid');
+                    phoneError.textContent = 'Please enter a valid phone number';
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    // Scroll to first error
+                    const firstError = document.querySelector('.is-invalid');
+                    if (firstError) {
+                        firstError.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }
+                }
+            });
+            
+            // Real-time validation
+            document.getElementById('email').addEventListener('input', function() {
+                if (this.value && !emailRegex.test(this.value)) {
+                    this.classList.add('is-invalid');
+                    document.getElementById('email_error').textContent = 'Please enter a valid email address';
+                } else {
+                    this.classList.remove('is-invalid');
+                    document.getElementById('email_error').textContent = '';
+                }
+            });
+            
+            document.getElementById('password').addEventListener('input', function() {
+                if (this.value && !passwordRegex.test(this.value)) {
+                    this.classList.add('is-invalid');
+                    document.getElementById('password_error').textContent = 'Password must be at least 8 characters with at least one number and special character';
+                } else {
+                    this.classList.remove('is-invalid');
+                    document.getElementById('password_error').textContent = '';
+                }
+            });
+            
+            document.getElementById('phone_number').addEventListener('input', function() {
+                if (this.value && !phoneRegex.test(this.value)) {
+                    this.classList.add('is-invalid');
+                    document.getElementById('phone_number_error').textContent = 'Please enter a valid phone number';
+                } else {
+                    this.classList.remove('is-invalid');
+                    document.getElementById('phone_number_error').textContent = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

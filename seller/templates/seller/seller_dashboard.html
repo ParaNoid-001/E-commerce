@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+
+{% block title %}Seller Dashboard - Silk Road{% endblock title %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+  :root {
+    --primary-color: #4CAF50;
+    --primary-light: #81C784;
+    --primary-dark: #388E3C;
+    --secondary-color: #2196F3;
+    --light-bg: #FFFFFF;
+    --light-surface: #F8F9FA;
+    --light-surface-hover: #E9ECEF;
+    --light-border: #DEE2E6;
+    --text-primary: #212529;
+    --text-secondary: #6C757D;
+    --success-color: #28A745;
+    --info-color: #17A2B8;
+    --warning-color: #FFC107;
+    --danger-color: #DC3545;
+  }
+
+  body {
+    background-color: var(--light-bg);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .dashboard-container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .dashboard-header {
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--light-border);
+  }
+
+  .dashboard-header h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+  }
+
+  .dashboard-header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 0;
+  }
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .dashboard-card {
+    background-color: var(--light-surface);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--light-border);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    background-color: var(--light-surface-hover);
+  }
+
+  .card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+  }
+
+  .dashboard-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .dashboard-card p {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    flex-grow: 1;
+  }
+
+  .card-action {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .card-action:hover {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .stats-section {
+    margin-top: 3rem;
+    background-color: var(--light-surface);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .stats-header h2 {
+    font-size: 1.8rem;
+    color: var(--text-primary);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .stat-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border-left: 4px solid var(--primary-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .stat-card h4 {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .stat-card p {
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-primary);
+  }
+
+  .stat-card.success {
+    border-left-color: var(--success-color);
+  }
+
+  .stat-card.info {
+    border-left-color: var(--info-color);
+  }
+
+  .stat-card.warning {
+    border-left-color: var(--warning-color);
+  }
+
+  .stat-card.danger {
+    border-left-color: var(--danger-color);
+  }
+
+  @media (max-width: 768px) {
+    .dashboard-header h1 {
+      font-size: 2rem;
+    }
+    
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header text-center">
+    <h1>Seller Dashboard</h1>
+    <p>Welcome back, {{ request.user.username }}! Manage your store efficiently.</p>
+  </div>
+
+  <!-- Main Dashboard Cards -->
+  <div class="dashboard-grid">
+    <!-- Product Management -->
+    {% if perms.product.view_product %}
+    <div class="dashboard-card">
+      <div class="card-icon">
+        <i class="fas fa-box-open"></i>
+      </div>
+      <h3>Product Inventory</h3>
+      <p>View, edit, and manage all your products in one place.</p>
+      <a href="{% url 'product_list' %}" class="card-action">Manage Products</a>
+    </div>
+    {% endif %}
+
+    <!-- Add Product -->
+    {% if perms.product.add_product %}
+    <div class="dashboard-card">
+      <div class="card-icon">
+        <i class="fas fa-plus-circle"></i>
+      </div>
+      <h3>Add New Product</h3>
+      <p>Expand your catalog by adding new products to your store.</p>
+      <a href="{% url 'product_create' %}" class="card-action">Create Product</a>
+    </div>
+    {% endif %}
+
+    <!-- Order Management -->
+    <div class="dashboard-card">
+      <div class="card-icon">
+        <i class="fas fa-shopping-bag"></i>
+      </div>
+      <h3>Order Management</h3>
+      <p>Process and fulfill customer orders efficiently.</p>
+      <a href="#" class="card-action">View Orders</a>
+    </div>
+
+    <!-- Sales Analytics -->
+    <div class="dashboard-card">
+      <div class="card-icon">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <h3>Sales Analytics</h3>
+      <p>Track your sales performance and business growth.</p>
+      <a href="#" class="card-action">View Analytics</a>
+    </div>
+  </div>
+
+  <!-- Statistics Section -->
+  <div class="stats-section">
+    <div class="stats-header">
+      <h2>Quick Stats</h2>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card success">
+        <h4>Total Products</h4>
+        <p>42</p>
+      </div>
+      <div class="stat-card info">
+        <h4>Orders Today</h4>
+        <p>18</p>
+      </div>
+      <div class="stat-card warning">
+        <h4>Pending Orders</h4>
+        <p>5</p>
+      </div>
+      <div class="stat-card danger">
+        <h4>Low Stock Items</h4>
+        <p>3</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS Bundle with Popper -->
+{% endblock content %}

@@ -1,0 +1,651 @@
+{% extends 'base.html' %} 
+{% load static %} 
+
+{% block title %}{{ product.name }} | Premium Shopping{% endblock %} 
+
+{% block extra_css %}
+<style>
+  :root {
+    --electric-blue: #0066ff;
+    --deep-blue: #0047ab;
+    --vibrant-gold: #ffd700;
+    --rich-gold: #d4af37;
+    --dark-bg: rgb(252, 252, 254);
+    --darker-bg: #0a0a0d;
+    --dark-surface: #1a1a24;
+    --darker-surface: #15151e;
+    --dark-border: #2a2a3a;
+    --text-primary: #ffffff;
+    --text-secondary: #b8b8cc;
+    --accent-purple: #8a2be2;
+  }
+
+  body {
+    background: var(--dark-bg);
+    color: var(--text-primary);
+    font-family: "Poppins", sans-serif;
+  }
+
+  /* Compact Product Card */
+  .product-card {
+    max-width: 1000px;
+    margin: 1rem auto;
+    background: linear-gradient(145deg, #1a1a24, #15151e);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    border: 1px solid rgba(138, 43, 226, 0.15);
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (min-width: 768px) {
+    .product-card {
+      flex-direction: row;
+    }
+  }
+
+  /* Product Image Section */
+  .product-image-container {
+    flex: 1;
+    padding: 1.5rem;
+    background: linear-gradient(145deg, #2a2a3a, #1a1a24);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .product-image {
+    max-height: 300px;
+    object-fit: contain;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+    transition: transform 0.3s ease;
+  }
+
+  .product-image:hover {
+    transform: scale(1.05);
+  }
+
+  /* Product Info Section */
+  .product-info {
+    flex: 1;
+    padding: 1.5rem;
+    background: var(--darker-surface);
+    position: relative;
+  }
+
+  .product-info::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      var(--electric-blue),
+      var(--accent-purple)
+    );
+  }
+
+  .product-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  .product-price {
+    font-size: 1.8rem;
+    background: linear-gradient(90deg, var(--vibrant-gold), var(--rich-gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .product-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  /* Rating Stars */
+  .rating {
+    color: var(--vibrant-gold);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .rating-count {
+    color: var(--text-secondary);
+    margin-left: 8px;
+    font-size: 0.9rem;
+  }
+
+  /* Compact Specs List */
+  .specs-list {
+    margin: 1.5rem 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .specs-list li {
+    display: flex;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .specs-list li span:first-child {
+    color: var(--text-secondary);
+    min-width: 100px;
+    display: inline-block;
+  }
+
+  .badge-category {
+    background: rgba(138, 43, 226, 0.2);
+    color: var(--accent-purple);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    display: inline-block;
+    border: 1px solid rgba(138, 43, 226, 0.3);
+  }
+
+  /* Action Buttons */
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    transition: all 0.3s ease;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .action-btn i {
+    margin-right: 8px;
+  }
+
+  .btn-gold {
+    background: linear-gradient(145deg, var(--vibrant-gold), var(--rich-gold));
+    color: #000;
+    box-shadow: 0 3px 10px rgba(255, 215, 0, 0.2);
+  }
+
+  .btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+  }
+
+  .btn-blue {
+    background: linear-gradient(145deg, var(--electric-blue), var(--deep-blue));
+    color: white;
+    box-shadow: 0 3px 10px rgba(0, 102, 255, 0.2);
+  }
+
+  .btn-blue:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 102, 255, 0.3);
+  }
+
+  .back-button {
+    background: rgba(42, 42, 58, 0.7);
+    border: 1px solid var(--dark-border);
+    color: var(--text-primary);
+  }
+
+  .back-button:hover {
+    background: rgba(138, 43, 226, 0.2);
+    border-color: var(--accent-purple);
+    transform: translateY(-2px);
+  }
+
+  .address-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .address-modal-content {
+    background: var(--darker-surface);
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 1px solid var(--accent-purple);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+  }
+
+  .address-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--dark-border);
+  }
+
+  .address-modal-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .address-modal-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .address-modal-close:hover {
+    color: var(--accent-purple);
+  }
+
+  .address-list {
+    margin-bottom: 1.5rem;
+  }
+
+  .address-item {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: var(--dark-surface);
+    border-radius: 8px;
+    border: 1px solid var(--dark-border);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .address-item:hover {
+    border-color: var(--accent-purple);
+    transform: translateY(-2px);
+  }
+
+  .address-item.selected {
+    border: 2px solid var(--vibrant-gold);
+    background: rgba(255, 215, 0, 0.05);
+  }
+
+  .address-item-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .address-item-name {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .address-item-default {
+    background: rgba(138, 43, 226, 0.2);
+    color: var(--accent-purple);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+  }
+
+  .address-item-details {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .no-addresses {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+  }
+
+  .address-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .btn-add-address {
+    background: rgba(138, 43, 226, 0.2);
+    color: var(--accent-purple);
+    border: 1px solid var(--accent-purple);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .btn-add-address:hover {
+    background: rgba(138, 43, 226, 0.3);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="product-card">
+    <!-- Product Image -->
+    <div class="product-image-container">
+      <img
+        src="{{ product.image.url }}"
+        class="product-image img-fluid"
+        alt="{{ product.name }}"
+      />
+    </div>
+
+    <!-- Product Info -->
+    <div class="product-info">
+      <h1 class="product-title">{{ product.name }}</h1>
+
+      <div class="rating">
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star-half-alt"></i>
+        <span class="rating-count">(24 reviews)</span>
+      </div>
+
+      <div class="product-price">₹ {{ product.price }}</div>
+
+      <div class="product-description">{{ product.description }}</div>
+
+      <!-- Product Specifications -->
+      <ul class="specs-list">
+        <li>
+          <span>Categories:</span>
+          <span>
+            {% for category in product.categories.all %}
+            <span class="badge-category">{{ category.name }}</span>
+            {% endfor %}
+          </span>
+        </li>
+        <li>
+          <span>Availability:</span>
+          <span
+            ><i class="fas fa-check-circle text-success me-1"></i> In
+            Stock</span
+          >
+        </li>
+        <li>
+          <span>Shipping:</span>
+          <span><i class="fas fa-shipping-fast me-1"></i> Free shipping</span>
+        </li>
+        <li>
+          <span>Delivery:</span>
+          <span><i class="fas fa-clock me-1"></i> 2-5 days</span>
+        </li>
+      </ul>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="action-btn btn-gold" value="{{ product.pk }}" id="add-cart">
+          <i class="fas fa-shopping-cart"></i> Add to Cart
+        </button>
+        <button id="rzp-button1" class="action-btn btn-blue">
+          <i class="fas fa-bolt"></i> Buy Now
+        </button>
+        <a href="{% url 'product_list' %}" class="action-btn back-button">
+          <i class="fas fa-arrow-left"></i> Back
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Address Selection Modal -->
+<div class="address-modal" id="addressModal">
+  <div class="address-modal-content">
+    <div class="address-modal-header">
+      <h3 class="address-modal-title">Select Delivery Address</h3>
+      <button class="address-modal-close" id="closeAddressModal">&times;</button>
+    </div>
+    
+    <div class="address-list" id="addressList">
+      {% if request.user.addresses.all %}
+        {% for address in request.user.addresses.all %}
+        <div class="address-item" data-address-id="{{ address.id }}">
+          <div class="address-item-header">
+            <span class="address-item-name">{{ address.address_name }}</span>
+            {% if address.is_default %}
+              <span class="address-item-default">Default</span>
+            {% endif %}
+          </div>
+          <div class="address-item-details">
+            {{ address.street_address }}, {{ address.city }}, {{ address.state }} - {{ address.zip_code }}, {{ address.country.name }}
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="no-addresses">
+          <p>You don't have any saved addresses yet.</p>
+          <a href="{% url 'add_address' %}" class="btn-add-address">
+            <i class="fas fa-plus"></i> Add New Address
+          </a>
+        </div>
+      {% endif %}
+    </div>
+    
+    <div class="address-actions">
+      <a href="{% url 'add_address' %}" class="btn-add-address">
+        <i class="fas fa-plus"></i> Add New Address
+      </a>
+      <button class="action-btn btn-blue" id="proceedToPayment" disabled>
+        <i class="fas fa-check"></i> Proceed to Payment
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %} 
+
+{% block extra_js %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Simple hover effects
+    const buttons = document.querySelectorAll(".action-btn");
+
+    buttons.forEach((button) => {
+      button.addEventListener("mouseenter", function () {
+        this.style.transform = "translateY(-3px)";
+      });
+
+      button.addEventListener("mouseleave", function () {
+        this.style.transform = "translateY(0)";
+      });
+    });
+
+    // Add to cart from product list/detail
+    $(document).on("click", "#add-cart", function(e) {
+      e.preventDefault();
+      const productId = $(this).val();
+      
+      $.ajax({
+        type: "POST",
+        url: "{% url 'cart:cart_add' %}",
+        data: {
+          product_id: productId,
+          csrfmiddlewaretoken: "{{ csrf_token }}"
+        },
+        success: function(response) {
+          if (response.success) {
+            // Update cart count in navbar
+            const cartBadge = $("#cart_quantity .badge");
+            
+            if (cartBadge.length) {
+              cartBadge.text(response.cart_total);
+            } else {
+              $("#cart_quantity").html(`
+                <i class="fas fa-shopping-cart"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  ${response.cart_total}
+                  <span class="visually-hidden">Cart</span>
+                </span>
+              `);
+            }
+            
+            // Show success message
+            alert("Product added to cart!");
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    });
+
+    // Address Selection Modal Logic
+    const addressModal = document.getElementById("addressModal");
+    const rzpButton = document.getElementById("rzp-button1");
+    const closeModal = document.getElementById("closeAddressModal");
+    const proceedToPayment = document.getElementById("proceedToPayment");
+    let selectedAddressId = null;
+
+    // Open modal when Buy Now is clicked
+    rzpButton.addEventListener("click", function(e) {
+      e.preventDefault();
+      
+      // Check if user is authenticated
+      {% if not request.user.is_authenticated %}
+        alert("Please login to proceed with your purchase.");
+        window.location.href = "{% url 'login' %}?next={{ request.path }}";
+        return;
+      {% endif %}
+      
+      addressModal.style.display = "flex";
+    });
+
+    // Close modal when X is clicked
+    closeModal.addEventListener("click", function() {
+      addressModal.style.display = "none";
+    });
+
+    // Close modal when clicking outside
+    addressModal.addEventListener("click", function(e) {
+      if (e.target === addressModal) {
+        addressModal.style.display = "none";
+      }
+    });
+
+    // Address selection
+    document.querySelectorAll(".address-item").forEach(item => {
+      item.addEventListener("click", function() {
+        // Remove selected class from all items
+        document.querySelectorAll(".address-item").forEach(i => {
+          i.classList.remove("selected");
+        });
+        
+        // Add selected class to clicked item
+        this.classList.add("selected");
+        selectedAddressId = this.dataset.addressId;
+        proceedToPayment.disabled = false;
+      });
+    });
+
+    // Proceed to payment after address selection
+    proceedToPayment.addEventListener("click", async function() {
+      if (!selectedAddressId) return;
+      
+      addressModal.style.display = "none";
+      
+      try {
+        // Show loading indicator
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        this.disabled = true;
+        
+        let response = await fetch(`{% url 'payment' product.id %}`, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            address_id: selectedAddressId
+          })
+        });
+        
+        let data = await response.json();
+        
+        // Reset button state
+        this.innerHTML = originalText;
+        this.disabled = false;
+        
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+        
+        var options = {
+          key: data.razorpay_key_id,
+          amount: data.amount,
+          currency: "INR",
+          name: "Your Store Name",
+          description: "Purchase of {{ product.name }}",
+          order_id: data.order_id,
+          callback_url: "{% url 'payment_callback' %}",
+          handler: function(response) {
+            window.location.href = `{% url 'payment_success' 0 %}`.replace('0', response.razorpay_order_id);
+          },
+          prefill: {
+            name: "{{ request.user.get_full_name }}",
+            email: "{{ request.user.email }}",
+            contact: "{{ request.user.phone_number|default:'' }}",
+          },
+          notes: {
+            address_id: selectedAddressId,
+            product_id: "{{ product.id }}"
+          },
+          theme: {
+            color: "#3399cc",
+          }
+        };
+        
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+      } catch (error) {
+        console.error("Payment error:", error);
+        alert("An error occurred while processing your payment. Please try again.");
+        
+        // Reset button state in case of error
+        proceedToPayment.innerHTML = '<i class="fas fa-check"></i> Proceed to Payment';
+        proceedToPayment.disabled = false;
+      }
+    });
+  });
+</script>
+{% endblock %}

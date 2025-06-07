@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Receipt #{{ order.razorpay_order_id }}</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+        .receipt-details { 
+            margin: 30px 0; 
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 12px;
+            text-align: left; 
+        }
+        th { 
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .total-row { 
+            font-weight: bold; 
+            background-color: #f8f8f8;
+        }
+        .total { 
+            text-align: right;
+            font-size: 1.1em;
+        }
+        .footer { 
+            margin-top: 50px; 
+            font-size: 0.9em; 
+            text-align: center;
+            color: #777;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .company-name {
+            font-weight: bold;
+            color: #444;
+        }
+        .thank-you {
+            font-size: 1.2em;
+            color: #2a6496;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Order Receipt</h1>
+        <p><strong>Order #{{ order.razorpay_order_id }}</strong></p>
+        <p>Date: {{ order.created_at|date:"F j, Y H:i" }}</p>  <!-- Fixed date display -->
+    </div>
+    
+    <div class="receipt-details">
+        <h2>Customer Information</h2>
+        <p><strong>Email:</strong> {{ order.user.email }}</p>
+        {% if order.user.phone_number %}
+        <p><strong>Phone:</strong> {{ order.user.phone_number }}</p>
+        {% endif %}
+    </div>
+    
+    <h2>Order Details</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ order.product_name|default:order.product }}</td>  <!-- Safely display product name -->
+                <td>1</td>
+                <td>₹{{ order.product_price|default:order.amount }}</td>  <!-- Safely display price -->
+                <td>₹{{ order.amount }}</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="total-row">
+                <td colspan="3" class="total">Total Amount:</td>
+                <td>₹{{ order.amount }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="total">Payment Status:</td>
+                <td>{{ order.get_status_display }}</td>  <!-- Show status properly -->
+            </tr>
+        </tfoot>
+    </table>
+    
+    <div class="footer">
+        <p class="thank-you">Thank you for your purchase!</p>
+        <p>If you have any questions about your order, please contact our customer support.</p>
+        <p>© {% now "Y" %} <span class="company-name">Your Company Name</span>. All rights reserved.</p>
+    </div>
+</body>
+</html>

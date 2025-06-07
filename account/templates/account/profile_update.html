@@ -1,0 +1,284 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg" style="border-radius: 15px; overflow: hidden;">
+                <div class="card-header py-3 text-white" style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user-edit fa-lg me-3"></i>
+                        <h4 class="mb-0">Update Your Profile</h4>
+                    </div>
+                </div>
+                <div class="card-body p-4" style="background-color: #f8fafc;">
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row g-4">
+                            <!-- Profile Picture Field -->
+                            <div class="col-12 text-center mb-4">
+                                <div class="position-relative d-inline-block">
+                                    {% if form.instance.profile_picture %}
+                                        <img id="profile-preview" src="{{ form.instance.profile_picture.url }}" 
+                                             class="rounded-circle shadow" 
+                                             style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #fff;">
+                                    {% else %}
+                                        <img id="profile-preview" src="https://ui-avatars.com/api/?name={{ request.user.name }}&background=random" 
+                                             class="rounded-circle shadow" 
+                                             style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #fff;">
+                                    {% endif %}
+                                    <label for="{{ form.profile_picture.id_for_label }}" class="btn btn-sm btn-primary rounded-pill position-absolute" 
+                                           style="bottom: 10px; right: 10px; cursor: pointer;">
+                                        <i class="fas fa-camera me-1"></i> Change
+                                    </label>
+                                    {{ form.profile_picture }}
+                                </div>
+                                {% if form.profile_picture.errors %}
+                                <div class="invalid-feedback d-block text-center">
+                                    <i class="fas fa-exclamation-circle me-1"></i> {{ form.profile_picture.errors|first }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Other Fields -->
+                            {% for field in form %}
+                                {% if field.name != 'profile_picture' %}
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="{{ field.id_for_label }}" class="form-label fw-bold text-dark">
+                                            {% if field.name == 'name' %}
+                                            <i class="fas fa-user me-2"></i>
+                                            {% elif field.name == 'email' %}
+                                            <i class="fas fa-envelope me-2"></i>
+                                            {% elif field.name == 'phone_number' %}
+                                            <i class="fas fa-phone me-2"></i>
+                                            {% elif field.name == 'dob' %}
+                                            <i class="fas fa-calendar-day me-2"></i>
+                                            {% elif field.name == 'gender' %}
+                                            <i class="fas fa-venus-mars me-2"></i>
+                                            {% endif %}
+                                            {{ field.label }}
+                                        </label>
+                                        
+                                        {% if field.name == 'dob' %}
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i class="fas fa-calendar text-primary" ></i></span>
+                                            <input type="date" class="form-control" id="{{ field.id_for_label }}" 
+                                                   name="{{ field.name }}" 
+                                                   value="{{ field.value|date:'Y-m-d' }}"
+                                                   max="{{ today|date:'Y-m-d' }}">
+                                        </div>
+                                        {% else %}
+
+
+
+                                        
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white">
+                                                {% if field.name == 'name' %}
+                                                <i class="fas fa-signature text-primary"></i>
+                                                {% elif field.name == 'email' %}
+                                                <i class="fas fa-at text-primary"></i>
+                                                {% elif field.name == 'phone_number' %}
+                                                <i class="fas fa-mobile-alt text-primary"></i>
+                                                {% elif field.name == 'gender' %}
+                                                <i class="fas fa-user-tag text-primary"></i>
+                                                {% endif %}
+                                            </span>
+                                            {{ field }}
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if field.help_text %}
+                                        <small class="form-text text-muted mt-1">{{ field.help_text }}</small>
+                                        {% endif %}
+                                        {% if field.errors %}
+                                        <div class="invalid-feedback d-block mt-1">
+                                            <i class="fas fa-exclamation-circle me-1"></i> {{ field.errors|first }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center border-top pt-4 mt-3">
+                            <a href="{% url 'account_management' %}" class="btn btn-lg btn-outline-secondary px-4 rounded-pill">
+                                <i class="fas fa-arrow-left me-2"></i> Back to Account
+                            </a>
+                            <button type="submit" class="btn btn-lg btn-primary px-4 rounded-pill shadow-sm" 
+                                    style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
+                                <i class="fas fa-save me-2"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Modern Card Styling */
+    .card {
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    /* Form Elements */
+    .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-control, .form-select {
+        height: 50px;
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #2575fc;
+        box-shadow: 0 0 0 0.25rem rgba(37, 117, 252, 0.15);
+    }
+    
+    /* Date Picker Specific */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        opacity: 0.6;
+        filter: invert(0.5);
+    }
+    
+    input[type="date"]::-webkit-calendar-picker-indicator:hover {
+        opacity: 1;
+    }
+    
+    /* Input Groups */
+    .input-group-text {
+        border-right: none;
+        background-color: white !important;
+        border-radius: 8px 0 0 8px !important;
+        border: 2px solid #e9ecef;
+        border-right: none !important;
+    }
+    
+    /* Buttons */
+    .btn {
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn-outline-secondary {
+        border: 2px solid #dee2e6;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: #321ae6;
+    }
+    
+    /* Profile Picture Upload */
+    #id_profile_picture {
+        display: none;
+    }
+    
+    /* Invalid Fields */
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+    
+    .is-invalid:focus {
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+    }
+    
+    .invalid-feedback {
+        font-size: 0.85rem;
+        color: #dc3545;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .btn-lg {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+        }
+        
+        .d-flex {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+</style>
+
+<script>
+    // Profile picture preview
+    document.getElementById('id_profile_picture').addEventListener('change', function(event) {
+        const [file] = event.target.files;
+        if (file) {
+            const preview = document.getElementById('profile-preview');
+            preview.src = URL.createObjectURL(file);
+            preview.onload = function() {
+                URL.revokeObjectURL(preview.src);
+            }
+        }
+    });
+
+    // Date validation - prevent future dates
+    document.addEventListener('DOMContentLoaded', function() {
+        const dobField = document.querySelector('input[type="date"]');
+        if (dobField) {
+            // Set max date to today
+            const today = new Date().toISOString().split('T')[0];
+            dobField.max = today;
+            
+            // Additional validation on form submit
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(event) {
+                const selectedDate = new Date(dobField.value);
+                const currentDate = new Date();
+                
+                if (selectedDate > currentDate) {
+                    event.preventDefault();
+                    alert('Date of birth cannot be in the future');
+                    dobField.focus();
+                }
+            });
+        }
+    });
+
+    // Initialize Bootstrap validation
+    (function() {
+        'use strict';
+        
+        var forms = document.querySelectorAll('.needs-validation');
+        
+        Array.prototype.slice.call(forms)
+            .forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    
+                    form.classList.add('was-validated');
+                }, false);
+            });
+    })();
+</script>
+{% endblock %}

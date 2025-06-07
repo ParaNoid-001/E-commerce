@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+                <div class="card-header py-3 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-map-marker-alt fa-lg me-3"></i>
+                        <h4 class="mb-0">Edit Address</h4>
+                    </div>
+                </div>
+                <div class="card-body p-4" style="background-color: #f8fcfc;">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row g-4">
+                            {% for field in form %}
+                            {% if field.name != 'is_default' %}
+                            <div class="col-{% if field.name == 'street_address' %}12{% else %}12{% if field.name != 'address_name' %}col-md-6{% endif %}{% endif %}">
+                                <div class="form-group mb-4">
+                                    <label for="{{ field.id_for_label }}" class="form-label fw-bold text-dark">
+                                        {% if field.name == 'address_name' %}
+                                        <i class="fas fa-tag me-2"></i>
+                                        {% elif field.name == 'street_address' %}
+                                        <i class="fas fa-road me-2"></i>
+                                        {% elif field.name == 'city' %}
+                                        <i class="fas fa-city me-2"></i>
+                                        {% elif field.name == 'state' %}
+                                        <i class="fas fa-map me-2"></i>
+                                        {% elif field.name == 'zip_code' %}
+                                        <i class="fas fa-mail-bulk me-2"></i>
+                                        {% elif field.name == 'country' %}
+                                        <i class="fas fa-globe me-2"></i>
+                                        {% endif %}
+                                        {{ field.label }}
+                                    </label>
+                                    
+                                    {% if field.name == 'address_name' or field.name == 'street_address' %}
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white">
+                                            {% if field.name == 'address_name' %}
+                                            <i class="fas fa-home text-primary"></i>
+                                            {% else %}
+                                            <i class="fas fa-map-pin text-primary"></i>
+                                            {% endif %}
+                                        </span>
+                                        <textarea id="{{ field.id_for_label }}" 
+                                               name="{{ field.name }}"
+                                               class="form-control resize-vertical"
+                                               style="min-height: {% if field.name == 'street_address' %}80px{% else %}50px{% endif %};"
+                                               rows="{% if field.name == 'street_address' %}3{% else %}1{% endif %}"
+                                               >{{ field.value|default:'' }}</textarea>
+                                    </div>
+                                    {% else %}
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white">
+                                            {% if field.name == 'city' %}
+                                            <i class="fas fa-building text-primary"></i>
+                                            {% elif field.name == 'state' %}
+                                            <i class="fas fa-flag text-primary"></i>
+                                            {% elif field.name == 'zip_code' %}
+                                            <i class="fas fa-envelope text-primary"></i>
+                                            {% elif field.name == 'country' %}
+                                            <i class="fas fa-flag-usa text-primary"></i>
+                                            {% endif %}
+                                        </span>
+                                        {{ field }}
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if field.help_text %}
+                                    <small class="form-text text-muted mt-1">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                    <div class="invalid-feedback d-block mt-1">
+                                        <i class="fas fa-exclamation-circle me-1"></i> {{ field.errors|first }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            
+                            <!-- Default Address Toggle -->
+                            <!-- <div class="col-12">
+                                <div class="form-check mb-4">
+                                    <div class="d-flex align-items-center">
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" name="is_default" id="id_is_default" 
+                                                   {% if form.is_default.value %}checked{% endif %}>
+                                            <span class="toggle-slider round"></span>
+                                        </label>
+                                        <label class="form-check-label fw-bold text-dark ms-3" for="id_is_default">
+                                            <i class="fas fa-star me-2 text-warning"></i> Set as default shipping address
+                                        </label>
+                                    </div>
+                                </div>
+                            </div> -->
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center border-top pt-4 mt-2">
+                            <a href="{% url 'account_management' %}" class="btn btn-lg btn-outline-secondary px-4 rounded-pill">
+                                <i class="fas fa-arrow-left me-2"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-lg btn-primary px-4 rounded-pill shadow" 
+                                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <i class="fas fa-save me-2"></i> Update Address
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Modern Card Styling */
+    .card {
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    /* Form Elements */
+    .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-control, .form-select {
+        height: 50px;
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+    }
+    
+    /* Resizable Textareas */
+    .resize-vertical {
+        resize: vertical;
+        min-width: 100%;
+        overflow: auto;
+        padding: 12px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+        min-height: 50px;
+    }
+    
+    .resize-vertical:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+    }
+    
+    /* Input Groups */
+    .input-group-text {
+        border-right: none;
+        background-color: white !important;
+        border-radius: 8px 0 0 8px !important;
+        border: 2px solid #e9ecef;
+        border-right: none !important;
+    }
+    
+    /* Buttons */
+    .btn {
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn-outline-secondary {
+        border: 2px solid #e9211a;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: #e81212;
+    }
+    
+    /* Custom Toggle Switch */
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+    
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+    }
+    
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+    }
+    
+    input:checked + .toggle-slider {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    input:checked + .toggle-slider:before {
+        transform: translateX(26px);
+    }
+    
+    /* Rounded sliders */
+    .toggle-slider.round {
+        border-radius: 34px;
+    }
+    
+    .toggle-slider.round:before {
+        border-radius: 50%;
+    }
+    
+    /* Invalid Fields */
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+    
+    .is-invalid:focus {
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+    }
+    
+    .invalid-feedback {
+        font-size: 0.85rem;
+        color: #dc3545;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .btn-lg {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+        }
+        
+        .d-flex {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+</style>
+
+<script>
+    // Auto-expand textareas based on content
+    document.querySelectorAll('.resize-vertical').forEach(textarea => {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+        
+        // Trigger initial resize
+        const event = new Event('input');
+        textarea.dispatchEvent(event);
+    });
+
+    // Initialize Bootstrap validation
+    (function() {
+        'use strict';
+        
+        var forms = document.querySelectorAll('.needs-validation');
+        
+        Array.prototype.slice.call(forms)
+            .forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+    })();
+</script>
+{% endblock %}

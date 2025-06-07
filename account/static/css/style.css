@@ -1,0 +1,29 @@
+/* custom.css */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .navbar {
+    background-color: #1a1a1a; /* Dark background for the navbar */
+    border-bottom: 3px solid #00aaff; /* Accent border color */
+  }
+  
+  .nav-link {
+    color: #f2f2f2; /* Light text color for readability */
+    transition: color 0.3s ease; /* Smooth transition for hover effects */
+  }
+  
+  .nav-link:hover, .nav-link.active {
+    color: #00aaff; /* Highlight color on hover/active */
+  }
+  
+  .btn-danger {
+    background-color: #de4759; /* Consistent color theme for buttons */
+  }
+  
+  .btn-danger:hover {
+    background-color: #c43d51;
+  }
+  

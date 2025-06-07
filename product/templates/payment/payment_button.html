@@ -1,0 +1,75 @@
+<div class="payment-container">
+    <button class="btn btn-primary payment-btn" data-product-id="{{ product.id }}">
+        Pay ₹{{ product.price }}
+    </button>
+    
+    <script>
+    document.querySelector('.payment-btn').addEventListener('click', function() {
+        const productId = this.dataset.productId;
+        
+        fetch('/payment/process/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({product_id: productId})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const options = {
+                    "key": data.razorpay_key,
+                    "amount": data.amount,
+                    "currency": data.currency,
+                    "name": "Your Store",
+                    "description": "Product Purchase",
+                    "order_id": data.order_id,
+                    "handler": function(response) {
+                        verifyPayment(response);
+                    },
+                    "prefill": {
+                        "name": data.user.name,
+                        "email": data.user.email
+                    },
+                    "theme": {
+                        "color": "#3399cc"
+                    }
+                };
+                
+                const rzp = new Razorpay(options);
+                rzp.open();
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Payment processing failed');
+        });
+    });
+    
+    function verifyPayment(response) {
+        fetch('/payment/callback/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                window.location.href = `/payment/success/${response.razorpay_order_id}/`;
+            } else {
+                window.location.href = `/payment/failed/${response.razorpay_order_id}/`;
+            }
+        });
+    }
+    </script>
+</div>

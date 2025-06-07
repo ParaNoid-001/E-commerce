@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <!-- Success Animation -->
+        <div class="success-animation mb-4">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+        
+        <h1 class="display-4 fw-bold mb-3 text-success">Payment Successful!</h1>
+        <p class="lead mb-4">Thank you for your purchase. Your order has been confirmed.</p>
+        
+        <div class="d-flex justify-content-center align-items-center mb-3">
+            <span class="badge bg-success rounded-pill px-3 py-2 me-2">
+                <i class="fas fa-check-circle me-1"></i> Confirmed
+            </span>
+            <span class="text-muted">Order #{{ order.razorpay_order_id }}</span>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-md-6 mb-4 mb-md-0">
+            <div class="card h-100 border-success">
+                <div class="card-header bg-success text-white">
+                    <h3 class="h5 mb-0">Order Summary</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Order Number:</span>
+                        <strong>#{{ order.razorpay_order_id }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Order Date:</span>
+                        <strong>{{ order.created_at|date:"F j, Y H:i" }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Payment Method:</span>
+                        <strong>Razorpay</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Payment Status:</span>
+                        <strong class="text-success">Paid</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Payment ID:</span>
+                        <strong>{{ order.razorpay_payment_id }}</strong>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Total Amount:</span>
+                        <span>₹ {{ order.amount }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-light">
+                    <h3 class="h5 mb-0">Delivery Information</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="h6 text-muted">Shipping Address</h4>
+                    <address class="mb-4">
+                        {{ order.shipping_address.full_name }}<br>
+                        {{ order.shipping_address.address_line1 }}<br>
+                        {% if order.shipping_address.address_line2 %}
+                            {{ order.shipping_address.address_line2 }}<br>
+                        {% endif %}
+                        {{ order.shipping_address.city }}, {{ order.shipping_address.state }}<br>
+                        {{ order.shipping_address.postal_code }}<br>
+                        Phone: {{ order.shipping_address.phone }}
+                    </address>
+                    
+                    <h4 class="h6 text-muted">Estimated Delivery</h4>
+                    <p class="mb-0">
+                        <i class="fas fa-truck me-2 text-muted"></i>
+                        {{ order.created_at|date:"F j" }} - {{ order.created_at|date:"F j" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Order Items Table -->
+<div class="order-details mb-5">
+  <h3 class="h4 mb-4 pb-2 border-bottom">Order Items</h3>
+  <div class="table-responsive">
+    <table class="table">
+      <thead class="table-light">
+        <tr>
+          <th style="width: 50%">Product</th>
+          <th class="text-center">Quantity</th>
+          <th class="text-end">Unit Price</th>
+          <th class="text-end">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if order.items.exists %}
+          <!-- If using OrderItems -->
+          {% for item in order.items.all %}
+          <tr>
+            <td>
+              <div class="d-flex align-items-center">
+                <img src="{% if item.product.image %}{{ item.product.image.url }}{% else %}{% static 'images/default-product.png' %}{% endif %}" 
+                     alt="{{ item.product.name }}" 
+                     class="img-thumbnail me-3" 
+                     style="width: 60px; height: 60px; object-fit: contain;">
+                <div>
+                  <h6 class="mb-1">{{ item.product.name }}</h6>
+                  {% if item.product.sku %}
+                  <small class="text-muted">SKU: {{ item.product.sku }}</small>
+                  {% endif %}
+                </div>
+              </div>
+            </td>
+            <td class="text-center">{{ item.quantity }}</td>
+            <td class="text-end">₹ {{ item.price }}</td>
+            <td class="text-end">₹ {% widthratio item.price 1 item.quantity %}</td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <!-- Fallback to direct product field if no OrderItems -->
+          <tr>
+            <td>
+              <div class="d-flex align-items-center">
+                <img src="{% if order.product.image %}{{ order.product.image.url }}{% else %}{% static 'images/default-product.png' %}{% endif %}" 
+                     alt="{{ order.product.name }}" 
+                     class="img-thumbnail me-3" 
+                     style="width: 60px; height: 60px; object-fit: contain;">
+                <div>
+                  <h6 class="mb-1">{{ order.product.name }}</h6>
+                </div>
+              </div>
+            </td>
+            <td class="text-center">1</td>
+            <td class="text-end">₹ {{ order.amount }}</td>
+            <td class="text-end">₹ {{ order.amount }}</td>
+          </tr>
+        {% endif %}
+      </tbody>
+      <tfoot class="table-group-divider">
+        <tr>
+          <th colspan="3" class="text-end">Total:</th>
+          <th class="text-end">₹ {{ order.amount }}</th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+    
+    <div class="row">
+        <div class="col-md-6 mb-3 mb-md-0">
+            <div class="card border-light">
+                <div class="card-body">
+                    <h4 class="h5 mb-3">What's Next?</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Order confirmation sent to {{ order.user.email }}</li>
+                        <li class="mb-2"><i class="fas fa-box text-primary me-2"></i> Your items are being prepared for shipment</li>
+                        <li><i class="fas fa-envelope text-info me-2"></i> You'll receive shipping confirmation soon</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card border-light">
+                <div class="card-body">
+                    <h4 class="h5 mb-3">Need Help?</h4>
+                    <p>If you have any questions about your order, please contact our customer support team.</p>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-envelope me-3 text-muted"></i>
+                        <span>support@yourstore.com</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-phone me-3 text-muted"></i>
+                        <span>+91-XXXXXXXXXX</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 mt-5 pt-4 border-top">
+        <a href="{% url 'product_list' %}" class="btn btn-primary px-4">
+            <i class="fas fa-shopping-bag me-2"></i>Continue Shopping
+        </a>
+        <a href="{% url 'order-receipt' order.id %}" class="btn btn-outline-secondary px-4" target="_blank">
+            <i class="fas fa-file-invoice me-2"></i>View Invoice
+        </a>
+        <a href="{% url 'order_history' %}" class="btn btn-outline-dark px-4">
+            <i class="fas fa-history me-2"></i>Order History
+        </a>
+    </div>
+</div>
+
+<style>
+    .success-animation {
+        margin: 0 auto;
+        text-align: center;
+        height: 100px;
+    }
+    
+    .checkmark {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto;
+    }
+    
+    .checkmark__circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 2;
+        stroke-miterlimit: 10;
+        stroke: #4bb543;
+        fill: none;
+        animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+    
+    .checkmark__check {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        stroke: #4bb543;
+        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    }
+    
+    @keyframes stroke {
+        100% {
+            stroke-dashoffset: 0;
+        }
+    }
+    
+    .order-details table img {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    .table th, .table td {
+        vertical-align: middle;
+    }
+</style>
+{% endblock %}

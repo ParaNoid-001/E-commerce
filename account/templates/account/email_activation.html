@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activate Your Email</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <style>
+        :root {
+            --primary-color: #4ade80;
+            --primary-hover: #22c55e;
+            --gradient-start: #1e3a8a;
+            --gradient-end: #1e40af;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.9);
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+            padding: 2.5rem;
+            width: 26rem;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 241, 116, 0.1) 0%, transparent 70%);
+            animation: pulse 6s infinite alternate;
+            z-index: -1;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(25%, 25%);
+            }
+        }
+
+        h4 {
+            font-weight: 800;
+            color: white;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(90deg, #ffffff, #d1fae5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+
+        h4::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--primary-color);
+            margin: 0.5rem auto 0;
+            border-radius: 2px;
+        }
+
+        .activation-text {
+            color: #e2e8f0;
+            text-align: center;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            font-size: 1.05rem;
+        }
+
+        .btn-activate {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-activate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 222, 128, 0.4);
+        }
+
+        .btn-activate::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(45deg);
+            transition: all 0.3s ease;
+        }
+
+        .btn-activate:hover::after {
+            left: 100%;
+        }
+
+        .icon-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .activation-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(74, 222, 128, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed var(--primary-color);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .small-text {
+            color: #94a3b8;
+            text-align: center;
+            display: block;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary-color);
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Card for Account Activation -->
+    <div class="card p-4 animate__animated animate__fadeIn">
+        <div class="icon-container">
+            <div class="activation-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary-color);">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+        </div>
+
+        <h4>Account Activation Required</h4>
+
+        <p class="activation-text">
+            Welcome aboard! Just one more step to complete your registration. 
+            Click the button below to verify your email address and activate your account.
+        </p>
+
+        <!-- Activation Button -->
+        <div class="text-center">
+            <a href="{{ activation_url }}" class="btn btn-activate w-100 fw-semibold" id="activateBtn">
+                Verify Email Address
+            </a>
+        </div>
+
+        <span class="small-text">
+            If you didn't request this, you can safely ignore this email.
+        </span>
+
+        <div class="footer">
+            © 2025 MVP Automotive. All rights reserved.
+        </div>
+    </div>
+
+    <script>
+        // Simple confetti effect on button hover
+        document.getElementById('activateBtn').addEventListener('mouseenter', function() {
+            const btn = this;
+            const btnRect = btn.getBoundingClientRect();
+            
+            // Create confetti elements
+            for (let i = 0; i < 8; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = (Math.random() * btnRect.width) + 'px';
+                confetti.style.top = (Math.random() * btnRect.height) + 'px';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confetti.style.opacity = '1';
+                
+                btn.appendChild(confetti);
+                
+                // Animate confetti
+                setTimeout(() => {
+                    confetti.style.transition = 'all 0.8s ease';
+                    confetti.style.opacity = '0';
+                    confetti.style.transform = `translate(${(Math.random() - 0.5) * 100}px, ${-Math.random() * 50 - 30}px) rotate(${Math.random() * 360}deg)`;
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 800);
+                }, 10);
+            }
+        });
+    </script>
+</body>
+</html>

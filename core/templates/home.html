@@ -1,0 +1,983 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home - MVP Automotive{% endblock title %}
+
+{% block extra_css %}
+<style>
+  :root {
+    --primary-color: #d82c20; /* Automotive red */
+    --primary-dark: #b8241a;
+    --secondary-color: #333333; /* Dark gray */
+    --text-primary: #212121; /* Bold black text */
+    --text-secondary: #6c757d; /* Soft gray text */
+    /*--accent-color: #f9a825; /* Golden yellow accent */
+    --bg-light: #f8f9fa; /* Light gray background */
+    --card-bg: #ffffff; /* White card background */
+    --footer-bg: #ffffff; /* White footer background */
+    --footer-text: #333333; /* Dark gray footer text */
+    --success-color: #28a745; /* Green for success messages */
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.2);
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #ffffff;
+    color: var(--text-primary);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* Hero Carousel */
+ .hero-section {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0 0 20px 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  background: url("{% static 'images/pattern1.avif' %}") center/cover;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Create a white center with transparent edges */
+  -webkit-mask-image: radial-gradient(circle at center, white 30%, transparent 70%);
+  mask-image: radial-gradient(circle at center, white 30%, transparent 70%);
+  background-color: rgba(0,0,0,0.3); /* Optional: darken the background */
+  z-index: 0;
+}
+
+.carousel {
+  position: relative;
+  z-index: 1; /* Ensure carousel stays above the background */
+  border-radius: 0;
+  overflow: hidden;
+  /* Add white background to carousel to ensure center stays white */
+  background-color: white;
+  /* Optional: add some padding to create space between carousel and framed background */
+  margin: 20px;
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
+}
+
+
+.carousel-item {
+  position: relative;
+  height: calc(80vh - 40px);
+  min-height: calc(600px - 40px);
+}
+
+  .carousel-item img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    filter: brightness(0.7);
+  }
+
+  .carousel-caption {
+    background: linear-gradient(135deg, rgba(216, 44, 32, 0.9), rgba(216, 44, 32, 0.8));
+    padding: 3rem;
+    border-radius: 16px;
+    bottom: 1%;
+    left: 1%;
+    right: 1%;
+    text-align: left;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .carousel-caption h5 {
+    font-size: 3rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    line-height: 1.2;
+  }
+
+  .carousel-caption p {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 2rem;
+  }
+
+  .carousel-caption .btn {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: var(--transition);
+  }
+
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 60px;
+    height: 60px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: var(--transition);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .carousel-control-prev:hover,
+  .carousel-control-next:hover {
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .carousel-indicators {
+    bottom: 30px;
+  }
+
+  .carousel-indicators button {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.5);
+    border: none;
+    margin: 0 8px;
+    transition: var(--transition);
+  }
+
+  .carousel-indicators .active {
+    background-color: var(--accent-color);
+    width: 16px;
+    height: 16px;
+    transform: scale(1.3);
+  }
+
+  /* Featured Categories Section */
+  .collections-section {
+    padding: 6rem 0;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--bg-light);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    position: relative;
+  }
+
+  .section-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.3rem;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .section-title {
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+    font-size: 2.8rem;
+  }
+
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 5px;
+    background: var(--primary-color);
+    border-radius: 3px;
+  }
+
+  .category-card {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: var(--transition);
+    position: relative;
+    z-index: 1;
+    box-shadow: var(--shadow-sm);
+    background: white;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .category-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .category-card img {
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .category-card:hover img {
+    transform: scale(1.05);
+  }
+
+  .category-card .card-body {
+    padding: 2rem;
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .category-card .card-title {
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .category-card .card-text {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    flex: 1;
+  }
+
+  .category-card .btn {
+    align-self: flex-start;
+    background: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    transition: var(--transition);
+  }
+
+  .category-card .btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(216, 44, 32, 0.3);
+  }
+
+  /* Stats Counter */
+  .stats-section {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    padding: 5rem 0;
+    margin: 4rem 0;
+    overflow: hidden;
+  }
+
+  .stats-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("{% static 'images/seamless-vintage-car-pattern.jpg' %}") repeat;
+    opacity: 0.1;
+    z-index: 0;
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .stat-number {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: white;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.9);
+  }
+
+  /* Promo Banner */
+  .promo-banner {
+    background: linear-gradient(90deg, var(--secondary-color) 0%, var(--text-primary) 100%);
+    color: white;
+    padding: 3rem;
+    border-radius: 16px;
+    margin: 5rem 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+
+  .promo-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(249,168,37,0.15) 0%, transparent 70%);
+  }
+
+  .promo-banner h3 {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-size: 2rem;
+  }
+
+  .promo-banner p {
+    opacity: 0.9;
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+  }
+
+  .promo-banner .btn {
+    border-width: 2px;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    transition: var(--transition);
+    background: var(--accent-color);
+    color: var(--text-primary);
+    border: none;
+  }
+
+  .promo-banner .btn:hover {
+    background: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(249, 168, 37, 0.3);
+  }
+
+  /* Brands Section */
+  .brands-section {
+    padding: 5rem 0;
+    background: white;
+  }
+
+  .brand-logo {
+    filter: grayscale(100%);
+    opacity: 0.7;
+    transition: var(--transition);
+    padding: 1.5rem;
+    max-height: 800px;
+    object-fit: contain;
+  }
+
+  .brand-logo:hover {
+    filter: grayscale(0%);
+    opacity: 5;
+    transform: scale(1.1);
+  }
+
+  /* Testimonials Section */
+  .testimonials-section {
+    padding: 6rem 0;
+    background-color: var(--bg-light);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .testimonial-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    height: 100%;
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .testimonial-card::before {
+    content: '"';
+    position: absolute;
+    top: 1rem;
+    left: 1.5rem;
+    font-size: 5rem;
+    font-family: Georgia, serif;
+    color: rgba(216, 44, 32, 0.1);
+    line-height: 1;
+    z-index: 0;
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .testimonial-card p {
+    font-style: italic;
+    color: var(--text-secondary);
+    position: relative;
+    z-index: 1;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+
+  .testimonial-card h5 {
+    color: var(--primary-color);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .testimonial-card .rating {
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .testimonial-card small {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  /* Newsletter Section */
+  .newsletter-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    padding: 5rem 0;
+    border-radius: 16px;
+    margin: 5rem 0;
+    color: rgb(255, 255, 255);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .newsletter-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("{% static 'images/pattern.png' %}") repeat;
+    opacity: 0.1;
+    z-index: 0;
+  }
+
+  .newsletter-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  .newsletter-section h3 {
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+  }
+
+  .newsletter-section p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .newsletter-form {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .newsletter-form .form-control {
+    height: 55px;
+    border-radius: 8px;
+    border: none;
+    padding: 0 1.5rem;
+    box-shadow: none;
+    font-size: 1rem;
+  }
+
+  .newsletter-form .btn {
+    height: 55px;
+    border-radius: 8px;
+    padding: 0 2.5rem;
+    font-weight: 600;
+    background: var(--accent-color);
+    color: var(--text-primary);
+    border: none;
+    transition: var(--transition);
+  }
+
+  .newsletter-form .btn:hover {
+    background: rgb(4, 189, 240);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(249, 168, 37, 0.3);
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 1200px) {
+    .carousel-item {
+      min-height: 500px;
+    }
+    
+    .carousel-caption h5 {
+      font-size: 2.5rem;
+    }
+    
+    .carousel-caption p {
+      font-size: 1.3rem;
+    }
+  }
+
+  @media (max-width: 992px) {
+    .carousel-item {
+      min-height: 450px;
+    }
+    
+    .carousel-caption {
+      bottom: 5%;
+      padding: 2rem;
+    }
+    
+    .carousel-caption h5 {
+      font-size: 2.2rem;
+    }
+    
+    .carousel-caption p {
+      font-size: 1.1rem;
+    }
+    
+    .section-title {
+      font-size: 2.4rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .carousel-item {
+      min-height: 400px;
+    }
+    
+    .carousel-caption {
+      left: 5%;
+      right: 5%;
+      padding: 1.5rem;
+      bottom: 3%;
+    }
+    
+    .carousel-caption h5 {
+      font-size: 1.8rem;
+      margin-bottom: 0.8rem;
+    }
+    
+    .carousel-caption p {
+      font-size: 1rem;
+      margin-bottom: 1.2rem;
+    }
+    
+    .section-title {
+      font-size: 2rem;
+    }
+    
+    .section-subtitle {
+      font-size: 1.1rem;
+    }
+    
+    .stat-number {
+      font-size: 2.5rem;
+    }
+    
+    .stat-label {
+      font-size: 1rem;
+    }
+    
+    .promo-banner {
+      padding: 2rem;
+      margin: 3rem 0;
+    }
+    
+    .promo-banner h3 {
+      font-size: 1.5rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .carousel-item {
+      min-height: 350px;
+    }
+    
+    .carousel-caption {
+      padding: 1rem;
+    }
+    
+    .carousel-caption h5 {
+      font-size: 1.5rem;
+    }
+    
+    .carousel-caption .btn {
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+    }
+    
+    .section-title {
+      font-size: 1.8rem;
+    }
+    
+    .section-title::after {
+      width: 80px;
+      height: 4px;
+      bottom: -10px;
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+    }
+    
+    .promo-banner .btn {
+      width: 100%;
+    }
+    
+    .newsletter-section h3 {
+      font-size: 1.8rem;
+    }
+    
+    .newsletter-section p {
+      font-size: 1rem;
+    }
+  }
+
+  /* Animation Classes */
+  .fade-in {
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .slide-up {
+    animation: slideUp 0.8s ease-out;
+  }
+
+  @keyframes slideUp {
+    from { 
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .pulse {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div>
+  <!-- Hero Carousel Section -->
+  <section class="hero-section">
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+      </div>
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="{% static 'images/carousel-auto1.avif' %}" class="d-block w-100" alt="Auto Parts Banner">
+          <div class="carousel-caption slide-up">
+            <h5>Premium Auto Parts & Accessories</h5>
+            <p>Genuine OEM and high-quality aftermarket parts for all makes and models at unbeatable prices.</p>
+            <a href="{% url 'product_list' %}" class="btn btn-light btn-lg pulse">Shop Now <i class="fas fa-arrow-right ms-2"></i></a>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="{% static 'images/carousel2.avif' %}" class="d-block w-100" alt="Engine Parts">
+          <div class="carousel-caption slide-up">
+            <h5>Performance Upgrades & Tuning</h5>
+            <p>Boost your vehicle's power, efficiency, and style with our premium performance components.</p>
+            <a href="{% url 'product_list' %}?category=performance" class="btn btn-light btn-lg">Explore Performance <i class="fas fa-bolt ms-2"></i></a>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="{% static 'images/carousel-auto33.avif' %}" class="d-block w-100" alt="Accessories">
+          <div class="carousel-caption slide-up">
+            <h5>Limited Time Summer Sale</h5>
+            <p>Get 15% off all brake systems and free shipping on orders over $100. Use code: BRAKE15</p>
+            <a href="{% url 'product_list' %}?category=brakes" class="btn btn-light btn-lg">Get Discount <i class="fas fa-tag ms-2"></i></a>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Stats Counter -->
+  <section class="stats-section fade-in">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-md-3 col-6">
+          <div class="stat-item">
+            <div class="stat-number" data-count="10000">0</div>
+            <div class="stat-label">Parts in Stock</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="stat-item">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Customer Support</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="stat-item">
+            <div class="stat-number" data-count="50">0</div>
+            <div class="stat-label">Brands Available</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="stat-item">
+            <div class="stat-number">2M+</div>
+            <div class="stat-label">Parts Shipped</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Categories Section -->
+  <section id="categories" class="collections-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="text-uppercase small fw-bold letter-spacing-2 text-primary">Shop by Category</span>
+        <h2 class="section-title">Quality Auto Parts</h2>
+        <p class="section-subtitle">Find the perfect parts and accessories for your vehicle from our extensive selection of premium products.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-3 col-md-6">
+          <div class="category-card slide-up" style="animation-delay: 0.1s;">
+            <img src="{% static 'images/engine-parts.webp' %}" class="card-img-top" alt="Engine Parts" loading="lazy">
+            <div class="card-body text-center">
+              <h4 class="card-title">Engine Components</h4>
+              <p class="card-text">From gaskets to complete engine assemblies, we have what you need to keep your vehicle running smoothly.</p>
+              <a href="{% url 'product_list' %}?category=engine" class="btn">Shop Engine Parts</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="category-card slide-up" style="animation-delay: 0.2s;">
+            <img src="{% static 'images/brake-system.avif' %}" class="card-img-top" alt="Brake Systems" loading="lazy">
+            <div class="card-body text-center">
+              <h4 class="card-title">Brake Systems</h4>
+              <p class="card-text">High-quality braking components for optimal stopping power and safety on the road.</p>
+              <a href="{% url 'product_list' %}?category=brakes" class="btn">Shop Brake Parts</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="category-card slide-up" style="animation-delay: 0.3s;">
+            <img src="{% static 'images/suspension.jpg' %}" class="card-img-top" alt="Suspension" loading="lazy">
+            <div class="card-body text-center">
+              <h4 class="card-title">Suspension</h4>
+              <p class="card-text">Keep your ride smooth and controlled with our premium suspension components and kits.</p>
+              <a href="{% url 'product_list' %}?category=suspension" class="btn">Shop Suspension</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="category-card slide-up" style="animation-delay: 0.4s;">
+            <img src="{% static 'images/car-accessories.jpg' %}" class="card-img-top" alt="Accessories" loading="lazy">
+            <div class="card-body text-center">
+              <h4 class="card-title">Accessories</h4>
+              <p class="card-text">Enhance and personalize your vehicle with our premium selection of accessories.</p>
+              <a href="{% url 'product_list' %}?category=accessories" class="btn">Shop Accessories</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Promo Banner -->
+  <section class="container fade-in">
+    <div class="promo-banner">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h3>Summer Maintenance Special</h3>
+          <p class="mb-0">Get your vehicle ready for the season with our complete maintenance kits. Save up to 20% on select items plus free shipping on orders over $75.</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+          <a href="{% url 'product_list' %}?on_sale=true" class="btn">View Deals <i class="fas fa-arrow-right ms-2"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Brands Section -->
+  <section class="brands-section fade-in">
+    <div class="container">
+      <div class="section-header">
+        <span class="text-uppercase small fw-bold letter-spacing-2 text-primary">Our Partners</span>
+        <h2 class="section-title">Trusted Brands</h2>
+        <p class="section-subtitle">We carry parts from the most reputable manufacturers in the automotive industry.</p>
+      </div>
+      <div class="row g-4 align-items-center justify-content-center">
+        <div class="col-6 col-md-3 col-lg-2">
+          <img src="{% static 'images/brand11.jpeg' %}" alt="Brand Logo" class="img-fluid brand-logo" loading="lazy">
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <img src="{% static 'images/brand2.png' %}" alt="Brand Logo" class="img-fluid brand-logo" loading="lazy">
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <img src="{% static 'images/brand33.webp' %}" alt="Brand Logo" class="img-fluid brand-logo" loading="lazy">
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <img src="{% static 'images/brand4.png' %}" alt="Brand Logo" class="img-fluid brand-logo" loading="lazy">
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <img src="{% static 'images/brand5.png' %}" alt="Brand Logo" class="img-fluid brand-logo" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="testimonials-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="text-uppercase small fw-bold letter-spacing-2 text-primary">Testimonials</span>
+        <h2 class="section-title">What Our Customers Say</h2>
+        <p class="section-subtitle">Don't just take our word for it - hear from our satisfied customers.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="testimonial-card slide-up" style="animation-delay: 0.1s;">
+            <p>The brake pads I ordered fit perfectly and arrived sooner than expected. Excellent quality at a great price! I'll definitely be ordering from MVP Automotive again.</p>
+            <div class="rating">★★★★★</div>
+            <h5>Michael T.</h5>
+            <small>Professional Mechanic</small>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="testimonial-card slide-up" style="animation-delay: 0.2s;">
+            <p>Their customer service helped me find the exact alternator I needed for my rare import. The part was delivered quickly and worked perfectly. Will definitely shop here again.</p>
+            <div class="rating">★★★★★</div>
+            <h5>Sarah J.</h5>
+            <small>Car Enthusiast</small>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="testimonial-card slide-up" style="animation-delay: 0.3s;">
+            <p>I've been using MVP Automotive for all my shop's parts needs for 3 years now. Consistent quality, reliable shipping, and great prices keep me coming back.</p>
+            <div class="rating">★★★★☆</div>
+            <h5>David R.</h5>
+            <small>Auto Shop Owner</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter Section -->
+  <section class="container">
+    <div class="newsletter-section fade-in">
+      <div class="newsletter-content">
+        <h3>Stay Updated With Our Latest Offers</h3>
+        <p>Subscribe to our newsletter for exclusive deals, new arrivals, automotive tips, and special promotions.</p>
+        <form class="newsletter-form">
+          <div class="input-group">
+            <input type="email" class="form-control" placeholder="Your email address" required>
+            <button class="btn" type="submit">Subscribe <i class="fas fa-paper-plane ms-2"></i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script>
+  // Add animations and interactive elements
+  document.addEventListener('DOMContentLoaded', function() {
+    // Animate stats counter
+    const statCounters = document.querySelectorAll('[data-count]');
+    const speed = 200;
+    
+    statCounters.forEach(counter => {
+      const target = +counter.getAttribute('data-count');
+      const count = +counter.innerText;
+      const increment = target / speed;
+      
+      if(count < target) {
+        counter.innerText = Math.ceil(count + increment);
+        setTimeout(updateCount, 1);
+      } else {
+        counter.innerText = target.toLocaleString();
+      }
+      
+      function updateCount() {
+        const count = +counter.innerText.replace(/,/g, '');
+        if(count < target) {
+          counter.innerText = Math.ceil(count + increment).toLocaleString();
+          setTimeout(updateCount, 1);
+        } else {
+          counter.innerText = target.toLocaleString();
+        }
+      }
+    });
+    
+    // Add intersection observer for scroll animations
+    const observerOptions = {
+      threshold: 0.1
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting) {
+          entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+    
+    document.querySelectorAll('.slide-up').forEach(element => {
+      observer.observe(element);
+    });
+    
+    // Add hover effects to carousel indicators
+    const indicators = document.querySelectorAll('.carousel-indicators button');
+    indicators.forEach(indicator => {
+      indicator.addEventListener('mouseover', function() {
+        this.style.transform = 'scale(1.5)';
+      });
+      indicator.addEventListener('mouseout', function() {
+        if(!this.classList.contains('active')) {
+          this.style.transform = 'scale(1)';
+        }
+      });
+    });
+  });
+</script>
+{% endblock%}

@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4">Checkout</h2>
+    
+    <div class="row">
+        <!-- Order Summary -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Order Summary</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart.items.all %}
+                            <tr>
+                                <td>{{ item.product.name }}</td>
+                                <td>₹{{ item.product.price }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>₹{{ item.total_price }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Shipping/Billing Address Form -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Shipping Information</h4>
+                </div>
+                <div class="card-body">
+                    <form id="shipping-form">
+                        <!-- Add your address fields here -->
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <input type="text" class="form-control" id="address" required>
+                        </div>
+                        <!-- Add more fields as needed -->
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Order Total & Payment -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Order Total</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th>Subtotal</th>
+                            <td>₹{{ cart.total_price }}</td>
+                        </tr>
+                        <tr>
+                            <th>Shipping</th>
+                            <td>₹0.00</td> <!-- Adjust as needed -->
+                        </tr>
+                        <tr class="font-weight-bold">
+                            <th>Total</th>
+                            <td>₹{{ cart.total_price }}</td>
+                        </tr>
+                    </table>
+                    
+                    <button id="rzp-button" class="btn btn-primary btn-block mt-3">
+                        Proceed to Payment
+                    </button>
+                    
+                    <a href="{% url 'cart:cart_summary' %}" class="btn btn-outline-secondary btn-block mt-2">
+                        Back to Cart
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Razorpay Payment Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+document.getElementById('rzp-button').onclick = function(e) {
+    e.preventDefault();
+    
+    // Validate shipping form if needed
+    // if (!validateShippingForm()) return;
+    
+    // Show loading state
+    this.disabled = true;
+    this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+    
+    // Create order via AJAX
+    fetch("{% url 'cart:create_cart_order' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+        
+        var options = {
+            "key": "{{ razorpay_key_id }}",
+            "amount": data.amount,
+            "currency": data.currency,
+            "name": "Your Store Name",
+            "description": "Order Payment",
+            "order_id": data.order_id,
+            "handler": function(response) {
+                // Handle successful payment
+                window.location.href = "{% url 'cart:order_success' %}";
+            },
+            "prefill": {
+                "name": "{{ request.user.get_full_name }}",
+                "email": "{{ request.user.email }}",
+                "contact": "" // Add phone if available
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+        
+        var rzp = new Razorpay(options);
+        rzp.open();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while processing your payment.');
+    })
+    .finally(() => {
+        // Reset button state
+        document.getElementById('rzp-button').disabled = false;
+        document.getElementById('rzp-button').innerHTML = 'Proceed to Payment';
+    });
+};
+</script>
+{% endblock %}
+
+<style>
+    /* Checkout page specific styles */
+.checkout-card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: 0.25rem;
+}
+
+.checkout-card .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eaecef;
+}
+
+#rzp-button {
+    padding: 10px 0;
+    font-size: 1.1rem;
+}
+</style>

@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="order-history-container">
+    <div class="order-history-header">
+        <h2 class="display-5 mb-4">Your Order History</h2>
+        <p class="text-muted">Review your past purchases and order status</p>
+    </div>
+    
+    <!-- Date Filter Section -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Filter Orders</h5>
+            <form method="get" class="row g-3">
+                <div class="col-md-5">
+                    <label for="start_date" class="form-label">From Date</label>
+                    <input type="date" class="form-control" id="start_date" name="start_date" 
+                           value="{{ request.GET.start_date }}">
+                </div>
+                <div class="col-md-5">
+                    <label for="end_date" class="form-label">To Date</label>
+                    <input type="date" class="form-control" id="end_date" name="end_date" 
+                           value="{{ request.GET.end_date }}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter me-1"></i> Filter
+                    </button>
+                </div>
+            </form>
+            {% if request.GET.start_date or request.GET.end_date %}
+            <div class="mt-3">
+                <a href="{% url 'order_history' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-times me-1"></i> Clear Filters
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% if orders %}
+    <div class="orders-list">
+        {% for order in orders %}
+        <div class="order-card card mb-4 shadow-sm border-success">
+            <div class="card-header d-flex justify-content-between align-items-center bg-success-light">
+                <div>
+                    <span class="badge bg-success me-2">
+                        Completed
+                    </span>
+                    <strong class="order-id">Order #{{ order.razorpay_order_id }}</strong>
+                </div>
+                <span class="order-date text-muted">
+                    <i class="far fa-calendar-alt me-1"></i>
+                    {{ order.created_at|date:"M d, Y" }}
+                </span>
+            </div>
+            
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="card-title mb-1">Order Summary</h5>
+                        <ul class="order-items list-unstyled">
+                            {% for item in order.items.all %}
+                            <li class="d-flex align-items-center py-1">
+                                <span class="bullet-point me-2">•</span>
+                                {{ item.product.name }} 
+                                <span class="text-muted ms-2">× {{ item.quantity }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="order-amount text-end">
+                        <div class="text-muted small">Total Amount</div>
+                        <div class="h4 text-primary">₹{{ order.amount }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-success">
+                        <i class="fas fa-check-circle me-1"></i> Order fulfilled
+                    </span>
+                </div>
+                <div class="btn-group">
+                    <a href="{% url 'payment_success' order.razorpay_order_id %}" 
+                       class="btn btn-outline-primary btn-sm px-3 py-2 rounded-start-pill">
+                        <i class="fas fa-eye me-1"></i> View Details
+                    </a>
+                    <a href="{% url 'order-receipt' order.id %}" 
+                       class="btn btn-primary btn-sm px-3 py-2 rounded-end-pill">
+                        <i class="fas fa-file-invoice me-1"></i> Invoice
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% else %}
+    <div class="no-orders text-center py-5 my-4">
+        <div class="empty-state">
+            <div class="empty-state-icon bg-light-primary rounded-circle p-4 mb-3">
+                <i class="fas fa-shopping-bag fa-3x text-primary"></i>
+            </div>
+            <h4 class="mb-3">No Orders Found</h4>
+            <p class="text-muted mb-4">
+                {% if request.GET.start_date or request.GET.end_date %}
+                No orders match your filter criteria. Try adjusting your date range.
+                {% else %}
+                You haven't placed any orders with us yet. Start shopping to see your order history here.
+                {% endif %}
+            </p>
+            <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg px-4 py-2 rounded-pill">
+                <i class="fas fa-store me-2"></i> Browse Products
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .order-history-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .order-history-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .order-card {
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .order-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .bg-success-light {
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+    
+    .empty-state {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .empty-state-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 80px;
+        height: 80px;
+    }
+    
+    .bullet-point {
+        color: #6c757d;
+        font-weight: bold;
+    }
+    
+    .btn-group {
+        display: flex;
+    }
+    
+    .btn-group .btn {
+        border-radius: 0;
+    }
+    
+    .btn-group .btn:first-child {
+        border-top-left-radius: 50rem;
+        border-bottom-left-radius: 50rem;
+    }
+    
+    .btn-group .btn:last-child {
+        border-top-right-radius: 50rem;
+        border-bottom-right-radius: 50rem;
+    }
+    
+    @media (max-width: 768px) {
+        .order-card .d-flex {
+            flex-direction: column;
+        }
+        
+        .order-amount {
+            text-align: left !important;
+            margin-top: 1rem;
+        }
+        
+        .card-footer .btn-group {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .card-footer .btn-group .btn {
+            border-radius: 50rem !important;
+            margin-bottom: 0.5rem;
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

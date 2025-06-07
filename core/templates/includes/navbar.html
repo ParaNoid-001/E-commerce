@@ -1,0 +1,612 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+  <div class="container-fluid px-4">
+    <!-- Brand Logo -->
+    <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}" style="transition: all 0.3s ease;">
+      <div class="logo-container position-relative me-2">
+        <img src="{% static 'images/brand-logo2.png' %}" 
+             alt="OneTech Logo" 
+             width="100" 
+             height="50" 
+             class="rounded-circle shadow-sm logo-img"
+             style="transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);">
+        <span class="logo-glow"></span>
+      </div>
+    </a>
+
+    <!-- Mobile Toggle Button -->
+    <button class="navbar-toggler border-0 hamburger" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#mainNav" 
+            aria-controls="mainNav" 
+            aria-expanded="false" 
+            aria-label="Toggle navigation">
+      <span class="hamburger-inner"></span>
+    </button>
+
+    <!-- Navbar Content -->
+    <div class="collapse navbar-collapse" id="mainNav">
+      <!-- Left Navigation -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item mx-1">
+          <a class="nav-link px-3 py-2 rounded-3 {% if request.path == '/' %}active bg-primary-soft{% endif %}" 
+             href="{% url 'home' %}">
+            <i class="fas fa-home fa-fw me-1"></i>
+            <span class="nav-link-text">Home</span>
+            <span class="nav-link-hover"></span>
+          </a>
+        </li>
+        
+        
+        <li class="nav-item mx-1">
+          <a class="nav-link px-3 py-2 rounded-3 {% if 'products' in request.path %}active bg-primary-soft{% endif %}" 
+             href="{% url 'product_list' %}">
+            <i class="fas fa-box-open fa-fw me-1"></i>
+            <span class="nav-link-text">Products</span>
+            <span class="nav-link-hover"></span>
+          </a>
+        </li>
+        <!-- <li class="nav-item mx-1">
+  <a class="nav-link px-3 py-2 rounded-3 {% if 'askquery' in request.path %}active bg-primary-soft{% endif %}" 
+     href="{% url 'askquery' %}"
+     id="ai-assistant-link"
+     data-ajax-load="true">
+    <i class="fas fa-robot fa-fw me-1"></i>
+    <span class="nav-link-text">AI Assistant</span>
+    <span class="nav-link-hover"></span>
+  </a>
+</li> -->
+       
+      </ul>
+
+      <!-- Right Navigation -->
+      <div class="d-flex align-items-center ms-auto">
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          {% if user.is_authenticated %}
+          <!-- Wishlist Icon -->
+          <li class="nav-item mx-1 position-relative">
+            <a class="nav-link px-2 py-1 rounded-3 icon-link position-relative" 
+               href="{% url 'wishlist:wishlist_view' %}"
+               style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+              <i class="fas fa-heart fa-fw"></i>
+              {% if user.wishlist.items.count > 0 %}
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger pulse" 
+                    style="font-size: 0.6rem; padding: 0.25em 0.4em; min-width: 18px;"
+                    id="navbar-wishlist-count">
+                {{ user.wishlist.items.count }}
+              </span>
+              {% endif %}
+              <span class="icon-tooltip">Wishlist</span>
+            </a>
+          </li>
+
+          <!-- Cart Icon -->
+          <li class="nav-item mx-1 position-relative">
+            <a class="nav-link px-2 py-1 rounded-3 icon-link position-relative" 
+               href="{% url 'cart:cart_summary' %}"
+               style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+              <i class="fas fa-shopping-cart fa-fw"></i>
+              {% with cart=request.user.cart %}
+                {% if cart and cart.items.count > 0 %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger pulse" 
+                      style="font-size: 0.6rem; padding: 0.25em 0.4em; min-width: 18px;"
+                      id="cart-count-badge">
+                  {{ cart.items.count }}
+                </span>
+                {% endif %}
+              {% endwith %}
+              <span class="icon-tooltip">Cart</span>
+            </a>
+          </li>
+
+          <!-- Seller Dropdown (if seller) -->
+          {% if user.is_seller %}
+          <li class="nav-item dropdown mx-1">
+            <a class="nav-link dropdown-toggle px-3 py-2 rounded-3 d-flex align-items-center seller-btn" 
+               href="#" 
+               id="sellerDropdown" 
+               role="button" 
+               data-bs-toggle="dropdown" 
+               aria-expanded="false">
+              <i class="fas fa-store fa-fw me-1"></i>
+              <span class="d-none d-lg-inline">Seller</span>
+              <span class="seller-badge">PRO</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 py-1" 
+                aria-labelledby="sellerDropdown"
+                style="border-radius: 12px;">
+              <li>
+                <a class="dropdown-item px-3 py-2 rounded-2 mx-2 my-1" 
+                   href="{% url 'seller_dashboard' %}">
+                  <i class="fas fa-tachometer-alt fa-fw me-2"></i>Dashboard
+                </a>
+              </li>
+              <li><hr class="dropdown-divider my-1"></li>
+              <li>
+                <a class="dropdown-item px-3 py-2 rounded-2 mx-2 my-1" 
+                   href="{% url 'product_create' %}">
+                  <i class="fas fa-plus-circle fa-fw me-2"></i>Add Product
+                </a>
+              </li>
+            </ul>
+          </li>
+          {% endif %}
+
+          <!-- User Dropdown -->
+          <li class="nav-item dropdown mx-1">
+  <a class="nav-link dropdown-toggle px-3 py-2 rounded-3 d-flex align-items-center user-avatar" 
+     href="#" 
+     id="userDropdown" 
+     role="button" 
+     data-bs-toggle="dropdown" 
+     aria-expanded="false">
+    {% if user.profile_picture %}
+    <div class="avatar-container">
+      <img src="{{ user.profile_picture.url }}" 
+           alt="Profile Picture" 
+           class="rounded-circle me-2 avatar-img" 
+           width="32" 
+           height="32">
+      <span class="avatar-status online"></span>
+    </div>
+    {% else %}
+    <div class="avatar-container">
+      <!-- Default avatar if no profile picture is set -->
+      <img src="{% static 'images/default-profile-pic.jpg' %}" 
+           alt="Default Profile Picture" 
+           class="rounded-circle me-2 avatar-img" 
+           width="32" 
+           height="32">
+      <span class="avatar-status online"></span>
+    </div>
+    {% endif %}
+    <span class="d-none d-lg-inline">Account</span>
+  </a>
+  <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 py-1" 
+      aria-labelledby="userDropdown"
+      style="border-radius: 12px;">
+    <li>
+      <div class="d-flex align-items-center px-3 py-2 mx-2 my-1">
+        {% if user.profile_picture %}
+        <img src="{{ user.profile_picture.url }}" 
+             alt="Profile Picture" 
+             class="rounded-circle me-2" 
+             width="40" 
+             height="40">
+        {% else %}
+        <img src="{% static 'images/default-profile-pic.jpg' %}" 
+             alt="Default Profile Picture" 
+             class="rounded-circle me-2" 
+             width="40" 
+             height="40">
+        {% endif %}
+        <div>
+          <h6 class="mb-0">{{ user.get_full_name|default:user.email }}</h6>
+          <small class="text-muted">{{ user.email }}</small>
+        </div>
+      </div>
+    </li>
+                <a class="dropdown-item px-3 py-2 rounded-2 mx-2 my-1" 
+                   href="{% url 'customer_dashboard' %}">
+                  <i class="fas fa-user-edit fa-fw me-2"></i>Profile
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item px-3 py-2 rounded-2 mx-2 my-1" 
+                   href="{% url 'order_history' %}">
+                  <i class="fas fa-cogs fa-fw me-2"></i>Orders
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item px-3 py-2 rounded-2 mx-2 my-1" 
+                   href="{% url 'admin_register' %}">
+                  <i class="fas fa-cogs fa-fw me-2"></i>Admin
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item px-3 py-2 rounded-2 mx-2 my-1" 
+                   href="{% url 's_change_password' %}">
+                  <i class="fas fa-key fa-fw me-2"></i>Change Password
+                </a>
+              </li>
+              <li><hr class="dropdown-divider my-1"></li>
+              <li>
+                <form method="post" action="{% url 'logout' %}" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit" 
+                          class="dropdown-item px-3 py-2 rounded-2 mx-2 my-1 bg-transparent border-0 w-100 text-start logout-btn">
+                    <i class="fas fa-sign-out-alt fa-fw me-2"></i>Logout
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </li>
+          
+          {% else %}
+          <!-- Register & Login Buttons -->
+          <li class="nav-item mx-1">
+            <a class="btn btn-primary px-3 py-2 rounded-3 shadow-sm register-btn" 
+               href="{% url 'register' %}">
+              <i class="fas fa-user-plus fa-fw me-1"></i>Register
+            </a>
+          </li>
+          <li class="nav-item mx-1">
+            <a class="btn btn-outline-primary px-3 py-2 rounded-3 login-btn" 
+               href="{% url 'login' %}">
+              <i class="fas fa-sign-in-alt fa-fw me-1"></i>Login
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<style>
+  /* Navbar base styles */
+  .navbar {
+    padding: 0.5rem 0;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    backdrop-filter: blur(5px);
+    background-color: rgba(255, 255, 255, 0.98) !important;
+  }
+
+  /* Logo styles with animation */
+  .logo-container {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .logo-img {
+    position: relative;
+    z-index: 2;
+    border: 2px solid rgba(59, 130, 246, 0.2);
+    object-fit: contain;
+  }
+  
+  .logo-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(59, 130, 246, 0.4);
+    border-radius: 50%;
+    z-index: 1;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  
+  .navbar-brand:hover .logo-img {
+    transform: rotate(10deg) scale(1.1);
+  }
+  
+  .navbar-brand:hover .logo-glow {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+
+  /* Nav link styles */
+  .nav-link {
+    font-weight: 500;
+    color: #111827 !important;
+    transition: all 0.2s ease !important;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .nav-link-text {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .nav-link-hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+    transform: translateY(100%);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 1;
+    border-radius: 8px;
+  }
+  
+  .nav-link:hover {
+    color: #3B82F6 !important;
+    transform: translateY(-2px);
+  }
+  
+  .nav-link:hover .nav-link-hover {
+    transform: translateY(0);
+  }
+  
+  .nav-link.active {
+    color: #3B82F6 !important;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(59, 130, 246, 0.2);
+  }
+
+  /* Icon links (cart, wishlist) */
+  .icon-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    transition: all 0.2s ease;
+  }
+  
+  .icon-link:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+  
+  .icon-tooltip {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(5px);
+    background: #111827;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1000;
+  }
+  
+  .icon-link:hover .icon-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(10px);
+  }
+
+  /* Badge/pulse animation */
+  .pulse {
+    animation: pulse 2s infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+  }
+
+  /* Dropdown styles */
+  .dropdown-menu {
+    border: none !important;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    min-width: 220px;
+    transform-origin: top right;
+    transform: scale(0.95);
+    opacity: 0;
+    display: block;
+    visibility: hidden;
+    z-index: 1001;
+  }
+  
+  .dropdown-menu.show {
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .dropdown-item {
+    transition: all 0.2s ease;
+    font-weight: 500;
+  }
+  
+  .dropdown-item:hover {
+    background: #3B82F6;
+    color: white !important;
+    transform: translateX(4px);
+  }
+  
+  .dropdown-item:hover i {
+    color: white !important;
+  }
+
+  /* Seller badge */
+  .seller-badge {
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 10px;
+    margin-left: 5px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  /* User avatar */
+  .avatar-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .avatar-img {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 2px solid rgba(59, 130, 246, 0.2);
+    object-fit: cover;
+  }
+  
+  .avatar-status {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+  
+  .avatar-status.online {
+    background: #10B981;
+  }
+  
+  .user-avatar:hover .avatar-img {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+  }
+
+  /* Button styles */
+  .register-btn {
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    border: none;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .register-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  
+  .register-btn:hover::before {
+    left: 100%;
+  }
+  
+  .login-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  
+  .login-btn:hover {
+    background: #3B82F6;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+  }
+
+  /* Hamburger menu animation */
+  .hamburger {
+    padding: 0;
+    width: 30px;
+    height: 24px;
+    position: relative;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .hamburger-inner {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: #111827;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  
+  .hamburger-inner::before,
+  .hamburger-inner::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: #111827;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  
+  .hamburger-inner {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .hamburger-inner::before {
+    top: -8px;
+  }
+  
+  .hamburger-inner::after {
+    bottom: -8px;
+  }
+  
+  .hamburger[aria-expanded="true"] .hamburger-inner {
+    background: transparent;
+  }
+  
+  .hamburger[aria-expanded="true"] .hamburger-inner::before {
+    top: 0;
+    transform: rotate(45deg);
+  }
+  
+  .hamburger[aria-expanded="true"] .hamburger-inner::after {
+    bottom: 0;
+    transform: rotate(-45deg);
+  }
+
+  /* Logout button */
+  .logout-btn {
+    color: #EF4444 !important;
+  }
+  
+  .logout-btn:hover {
+    background: #EF4444 !important;
+    color: white !important;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 991.98px) {
+    .navbar-collapse {
+      padding: 1rem 0;
+      background: white;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .nav-item {
+      margin: 0.25rem 0;
+    }
+    
+    .dropdown-menu {
+      border: none !important;
+      box-shadow: none;
+      transform: none;
+      opacity: 1;
+      visibility: visible;
+      display: none;
+    }
+    
+    .dropdown-menu.show {
+      display: block;
+    }
+    
+    .icon-tooltip {
+      display: none;
+    }
+    
+    .logo-img {
+      width: 60px;
+      height: 30px;
+    }
+  }
+</style>
+
+<script src="{% static 'js/navbar.js' %}"></script>

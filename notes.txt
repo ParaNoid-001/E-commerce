@@ -1,0 +1,77 @@
+# # Handle password change
+#         if 'password_submit' in request.POST:
+#             password_form = CustomPasswordChangeForm(request.user, request.POST)
+#             if password_form.is_valid():
+#                 try:
+#                     user = password_form.save()
+#                     update_session_auth_hash(request, user)
+                    
+#                     # Send email notification
+#                     context = {
+#                         'user': user,
+#                         'timestamp': timezone.now(),
+#                         'site_name': 'Your Site Name'
+#                     }
+                    
+#                     subject = 'Password Changed Successfully'
+#                     message = render_to_string(
+#                         'emails/password_change_notification.html',
+#                         context
+#                     )
+                    
+#                     send_mail(
+#                         subject,
+#                         message,
+#                         None,  # Uses DEFAULT_FROM_EMAIL
+#                         [user.email],
+#                         html_message=message
+#                     )
+                    
+#                     messages.success(request, "Your password was successfully updated!")
+#                     return redirect('account_management')
+#                 except Exception as e:
+#                     messages.error(request, f"Error changing password: {str(e)}")
+#             else:
+#                 for field, errors in password_form.errors.items():
+#                     for error in errors:
+#                         messages.error(request, f"Password error: {error}")
+
+
+
+"handler": function(response) {
+    // Verify payment on your server
+    fetch("{% url 'cart:verify_payment' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+            'razorpay_order_id': response.razorpay_order_id,
+            'razorpay_payment_id': response.razorpay_payment_id,
+            'razorpay_signature': response.razorpay_signature
+        }),
+        credentials: 'same-origin'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = data.redirect_url;
+        } else {
+            alert('Payment verification failed: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while verifying your payment.');
+    });
+},
+
+
+
+
+
+*add validation for checking valid address
+
+*what are the common errors occur during payment ?
+*embed imgae in the order receipt pdf.

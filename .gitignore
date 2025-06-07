@@ -1,0 +1,32 @@
+# Example .gitignore file
+
+# Ignore all files in a directory
+logs/
+temp/
+
+# Ignore specific file types
+*.log
+*.tmp
+*.cache
+
+# Ignore environment files (e.g., Python)
+.env
+venv/
+__pycache__/
+
+# Ignore OS-specific files
+.DS_Store  # macOS
+Thumbs.db  # Windows
+
+# Ignore IDE files (VS Code, PyCharm)
+.vscode/
+.idea/
+
+# Django
+
+*.py[cod]
+*.sqlite3
+media/
+staticfiles/
+
+

@@ -1,0 +1,717 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Products{% endblock %}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+{% block extra_css %}
+<style>
+  :root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --light-bg: #ffffff;
+    --light-surface: #f8f9fa;
+    --light-border: #dee2e6;
+    --text-dark: #212529;
+    --text-muted: #6c757d;
+  }
+
+  body {
+    background-color: var(--light-bg);
+    color: var(--text-dark);
+  }
+
+  .navbar {
+    background-color: var(--light-bg) !important;
+    border-bottom: 1px solid var(--light-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .product-card {
+    background-color: var(--light-bg);
+    border: 1px solid var(--light-border);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  .product-image {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--light-bg);
+    border: none;
+    color: var(--text-dark);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    z-index: 2;
+  }
+
+  .wishlist-btn:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+  }
+
+  .wishlist-btn.active {
+    color: red;
+  }
+
+  .discount-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    z-index: 2;
+  }
+
+  .price {
+    color: var(--primary-color);
+    font-weight: 700;
+  }
+
+  .original-price {
+    text-decoration: line-through;
+    color: var(--text-muted);
+  }
+
+  .rating {
+    color: #ffc107;
+  }
+
+  .btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+    font-weight: 600;
+  }
+
+  .btn-outline-secondary {
+    border-color: var(--light-border);
+    color: var(--text-dark);
+  }
+
+  .btn-outline-secondary:hover {
+    background-color: var(--light-border);
+    border-color: var(--light-border);
+  }
+
+  .service-badge {
+    background-color: #e9ecef;
+    color: var(--primary-color);
+    padding: 8px 16px;
+    border-radius: 20px;
+  }
+
+  .form-range::-webkit-slider-thumb {
+    background-color: var(--primary-color);
+  }
+
+  .form-range::-moz-range-thumb {
+    background-color: var(--primary-color);
+  }
+
+  /* Dropdown styling */
+  .dropdown-menu {
+    background-color: var(--light-bg);
+    border: 1px solid var(--light-border);
+  }
+
+  .dropdown-item {
+    color: var(--text-dark);
+  }
+
+  .dropdown-item:hover {
+    background-color: var(--light-surface);
+    color: var(--text-dark);
+  }
+
+  .dropdown-item.active {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  /* Search bar styling */
+  .search-bar {
+    max-width: 600px;
+    margin: 0 auto;
+    flex-grow: 1;
+  }
+
+  .search-bar .form-control {
+    background-color: var(--light-bg);
+    border: 1px solid var(--light-border);
+    color: var(--text-dark);
+  }
+
+  .search-bar .btn {
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+  }
+
+  .search-bar .btn:hover {
+    background-color: #0069d9;
+  }
+
+  /* Top navigation bar */
+  .top-nav {
+    background-color: var(--light-bg);
+    padding: 1rem;
+    border-bottom: 1px solid var(--light-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .top-nav .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+  }
+
+  .top-nav .nav-link {
+    color: var(--text-dark);
+    margin-left: 1rem;
+  }
+
+  .top-nav .nav-link:hover {
+    color: var(--primary-color);
+  }
+
+  /* Filter buttons */
+  .filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: 1rem;
+  }
+
+  .filter-buttons .btn {
+    background-color: var(--light-bg);
+    border: 1px solid var(--light-border);
+    color: var(--text-dark);
+  }
+
+  .filter-buttons .btn:hover {
+    background-color: var(--light-surface);
+  }
+
+  /* Buy Now button fix */
+  .btn-outline-primary a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Admin action buttons */
+  .admin-actions {
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    display: flex;
+    gap: 5px;
+    z-index: 2;
+  }
+
+  .admin-actions .btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-card:hover .admin-actions .btn {
+    opacity: 1;
+  }
+
+  .btn-edit {
+    background-color: rgba(255, 193, 7, 0.9);
+    color: #212529;
+    border: none;
+  }
+
+  .btn-edit:hover {
+    background-color: #ffc107;
+    color: #212529;
+  }
+
+  .btn-delete {
+    background-color: rgba(220, 53, 69, 0.9);
+    color: white;
+    border: none;
+  }
+
+  .btn-delete:hover {
+    background-color: #dc3545;
+    color: white;
+  }
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    background: #4CAF50;
+    color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    animation: slideIn 0.3s, fadeOut 0.5s 2.5s;
+}
+
+.toast.error {
+    background: #f44336;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+<!-- Top Navigation Bar -->
+<nav class="top-nav">
+  <div class="container-fluid d-flex align-items-center">
+
+    <!-- Search Bar -->
+    <form class="d-flex search-bar mx-4" method="GET" action="{% url 'product_list' %}">
+      <input
+        type="text"
+        name="q"
+        class="form-control me-2"
+        placeholder="Search products..."
+        value="{{ request.GET.q }}"
+      />
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-search"></i>
+      </button>
+    </form>
+
+    <!-- Filter Buttons -->
+    <div class="filter-buttons">
+      <!-- Categories Dropdown -->
+      <div class="dropdown">
+        <button
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          id="categoriesDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="fas fa-list"></i> Categories
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+          <li>
+            <a
+              href="{% url 'product_list' %}"
+              class="dropdown-item {% if not selected_category %}active{% endif %}"
+            >
+              All Categories
+            </a>
+          </li>
+          {% for category in categories %}
+          <li>
+            <a
+              href="{% url 'product_list' %}?category={{ category.name|urlencode }}"
+              class="dropdown-item {% if selected_category == category.name %}active{% endif %}"
+            >
+              {{ category.name }}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Sort By Dropdown -->
+      <div class="dropdown">
+        <button
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          id="sortByDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="fas fa-sort"></i> Sort By
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="sortByDropdown">
+          <li>
+            <a
+              href="{% url 'product_list' %}?sort=name"
+              class="dropdown-item {% if sort_by == 'name' %}active{% endif %}"
+            >
+              Relevance
+            </a>
+          </li>
+          <li>
+            <a
+              href="{% url 'product_list' %}?sort=price"
+              class="dropdown-item {% if sort_by == 'price' %}active{% endif %}"
+            >
+              Price: Low to High
+            </a>
+          </li>
+          <li>
+            <a
+              href="{% url 'product_list' %}?sort=-price"
+              class="dropdown-item {% if sort_by == '-price' %}active{% endif %}"
+            >
+              Price: High to Low
+            </a>
+          </li>
+          <li>
+            <a
+              href="{% url 'product_list' %}?sort=-created_at"
+              class="dropdown-item {% if sort_by == '-created_at' %}active{% endif %}"
+            >
+              Newest Arrivals
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Price Range Dropdown -->
+      <div class="dropdown">
+        <button
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          id="priceRangeDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="fas fa-indian-rupee-sign"></i> Price Range
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="priceRangeDropdown">
+          <li>
+            <div class="px-3 py-2">
+              <input type="range" class="form-range" min="0" max="1000" />
+              <div class="d-flex justify-content-between">
+                <small>₹0</small>
+                <small>₹1000</small>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Customer Rating Dropdown -->
+      <div class="dropdown">
+        <button
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          id="customerRatingDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="fas fa-star"></i> Customer Rating
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="customerRatingDropdown">
+          <li>
+            <div class="px-3 py-2">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" />
+                <label class="form-check-label">
+                  <i class="fas fa-star text-warning"></i> 4 & above
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" />
+                <label class="form-check-label">
+                  <i class="fas fa-star text-warning"></i> 3 & above
+                </label>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    
+  </div>
+</nav>
+
+<!-- Products Grid -->
+<div class="container-fluid">
+  <div class="row">
+    <main class="col-12 p-4">
+      <!-- Loop through products with  4per row -->
+      <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-4 g-4">
+        {% for product in products %}
+        <div class="col" id="product-list">
+          <div class="card product-card h-100">
+            <div class="position-relative" style="padding-top: 100%;">
+              <!-- Admin Actions (Edit/Delete) -->
+              {% if perms.product.change_product or perms.product.delete_product %}
+              <div class="admin-actions">
+                {% if perms.product.change_product %}
+                <a href="{% url 'product_edit' product.pk %}" class="btn btn-edit" title="Edit">
+                  <i class="fas fa-edit fa-xs"></i>
+                </a>
+                {% endif %}
+                {% if perms.product.delete_product %}
+                <a href="{% url 'product_delete' product.pk %}" class="btn btn-delete" title="Delete">
+                  <i class="fas fa-trash-alt fa-xs"></i>
+                </a>
+                {% endif %}
+              </div>
+              {% endif %}
+              
+              <span class="badge bg-danger discount-badge" style="font-size: 0.6rem;">20% off</span>
+              <!-- Wishlist Button -->
+               
+              <button class="wishlist-btn {% if in_wishlist %}active{% endif %}" 
+                data-product-id="{{ product.id }}"
+                title="{% if in_wishlist %}Remove from wishlist{% else %}Add to wishlist{% endif %}">
+                <i class="fas fa-heart"></i>
+              </button>
+              // Call it on page load if user is authenticated
+      {% if user.is_authenticated %}
+      updateWishlistCount();
+      {% endif %}
+              <!-- Product Image -->
+              <img
+                src="{{ product.image.url }}"
+                class="card-img-top product-image"
+                alt="{{ product.name }}"
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 0.5rem;"
+              />
+            </div>
+            <div class="card-body p-2">
+              <h6 class="card-title mb-1" style="font-size: 0.8rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                {{ product.name }}
+              </h6>
+              <div class="rating mb-1" style="font-size: 0.7rem;">
+                <span class="text-muted">{{ product.description|truncatechars:30 }}</span>
+              </div>
+              <div class="d-flex align-items-center mb-1">
+                <span class="price" style="font-size: 0.9rem;">₹ {{ product.price }}</span>
+              </div>
+              <div class="mt-auto d-grid gap-1">
+                <button class="btn btn-sm btn-primary py-1" value="{{ product.pk }}" id="add-cart">
+                  <i class="fas fa-cart-plus"></i> Add to Cart
+                </button>
+                
+                <a href="{% url 'product_detail' product.pk %}" class="btn btn-sm btn-outline-primary py-1">
+                  Buy
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Add a new row after every 5th product -->
+        {% if forloop.counter|divisibleby:4 and not forloop.last %}
+      </div>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-4 g-4 mt-4">
+        {% endif %}
+        {% endfor %}
+      </div>
+
+      <!-- Pagination remains unchanged -->
+      <!-- Pagination -->
+<nav class="mt-5">
+  <ul class="pagination justify-content-center">
+      {% if products.has_previous %}
+          <li class="page-item">
+              <a class="page-link" href="?page={{ products.previous_page_number }}{% if sort_by %}&sort={{ sort_by }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}"
+              hx-target="#product-list"
+              hx-include="[name='categories']">
+                  Previous
+              </a>
+          </li>
+      {% else %}
+          <li class="page-item disabled">
+              <span class="page-link">Previous</span>
+          </li>
+      {% endif %}
+
+      {% for num in products.paginator.page_range %}
+          {% if products.number == num %}
+              <li class="page-item active">
+                  <span class="page-link">{{ num }}</span>
+              </li>
+          {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+              <li class="page-item">
+                  <a class="page-link" href="?page={{ num }}{% if sort_by %}&sort={{ sort_by }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">
+                      {{ num }}
+                  </a>
+              </li>
+          {% endif %}
+      {% endfor %}
+
+      {% if products.has_next %}
+          <li class="page-item">
+              <a class="page-link" href="?page={{ products.next_page_number }}{% if sort_by %}&sort={{ sort_by }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}"
+              hx-target="#product-list"
+              hx-include="[name='categories']"
+              >
+                  Next
+              </a>
+          </li>
+      {% else %}
+          <li class="page-item disabled">
+              <span class="page-link">Next</span>
+          </li>
+      {% endif %}
+  </ul>
+</nav>
+    </main>
+  </div>
+</div>
+
+
+{% endblock %}
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+<!-- {% block extra_js %} -->
+<script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.js"></script>
+
+<script>
+    // Add to cart from product list/detail
+    $(document).on("click", "#add-cart", function(e) {
+      e.preventDefault();
+      const productId = $(this).val();
+      
+      $.ajax({
+        type: "POST",
+        url: "{% url 'cart:cart_add' %}",
+        data: {
+          product_id: productId,
+          csrfmiddlewaretoken: "{{ csrf_token }}"
+        },
+        success: function(response) {
+          if (response.success) {
+            // Update cart count in navbar
+            const cartBadge = $("#cart_quantity .badge");
+            
+            if (cartBadge.length) {
+              cartBadge.text(response.cart_total);
+            } else {
+              $("#cart_quantity").html(`
+                <i class="fas fa-shopping-cart"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  ${response.cart_total}
+                  <span class="visually-hidden">Cart</span>
+                </span>
+              `);
+            }
+            
+            // Show success message
+            alert("Product added to cart!");
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    });
+
+    $(document).ready(function() {
+      // Toggle wishlist item
+      $(document).on('click', '.wishlist-btn', function(e) {
+          e.preventDefault();
+          const productId = $(this).data('product-id');
+          const button = $(this);
+          
+          $.ajax({
+              type: "POST",
+              url: `/wishlist/toggle/${productId}/`,
+              headers: {
+                  "X-CSRFToken": "{{ csrf_token }}"
+              },
+              success: function(response) {
+                  if (response.status === 'success') {
+                      // Update button state
+                      button.toggleClass('active');
+                      
+                      // Update wishlist count in navbar and page
+                      $('#wishlist-count').text(response.wishlist_count + ' item' + (response.wishlist_count !== 1 ? 's' : ''));
+                      
+                      // If on wishlist page and item was removed, remove from DOM
+                      if (response.action === 'removed' && window.location.pathname === '/wishlist/') {
+                          $(`.wishlist-item[data-product-id="${productId}"]`).remove();
+                          
+                          // If last item, show empty state
+                          if (response.wishlist_count === 0) {
+                              $('.wishlist-container').html(`
+                                  <div class="empty-wishlist">
+                                      <div class="empty-wishlist-icon">
+                                          <i class="fas fa-heart"></i>
+                                      </div>
+                                      <h3 class="empty-wishlist-text">Your wishlist is empty</h3>
+                                      <a href="{% url 'product_list' %}" class="btn btn-primary">
+                                          Browse Products
+                                      </a>
+                                  </div>
+                              `);
+                          }
+                      }
+                      
+                      // Show toast notification
+                      showToast(response.action === 'added' ? 'Added to wishlist' : 'Removed from wishlist');
+                  }
+              },
+              error: function(xhr, status, error) {
+                  console.error(error);
+                  showToast('Error updating wishlist', 'error');
+              }
+          });
+      });
+      
+      // Function to show toast notifications
+      function showToast(message, type = 'success') {
+          const toast = $(`
+              <div class="toast ${type}">
+                  ${message}
+              </div>
+          `);
+          
+          $('body').append(toast);
+          setTimeout(() => toast.remove(), 3000);
+      }
+      
+      // Update wishlist count in navbar on page load
+      function updateWishlistCount() {
+          $.ajax({
+              url: "{% url 'wishlist:wishlist_count' %}",
+              success: function(response) {
+                  $('#navbar-wishlist-count').text(response.count);
+              }
+          });
+      }
+      
+      
+  });
+  
+</script>
+
+<!-- {% endblock %} -->

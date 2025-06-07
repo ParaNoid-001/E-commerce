@@ -1,0 +1,341 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4">Checkout</h2>
+    
+    <div class="row">
+        <!-- Order Summary -->
+        <div class="col-md-8">
+            <div class="card mb-4 checkout-card">
+                <div class="card-header">
+                    <h4>Order Summary</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart.items.all %}
+                            <tr>
+                                <td>{{ item.product.name }}</td>
+                                <td>₹{{ item.product.price }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>₹{{ item.total_price }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Shipping/Billing Address Section -->
+            <div class="card mb-4 checkout-card">
+                <div class="card-header">
+                    <h4>Shipping Information</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Saved Addresses -->
+                    <div class="mb-4">
+                        <h5>Select from saved addresses</h5>
+                        {% if request.user.addresses.all %}
+                            <div class="list-group">
+                                {% for address in request.user.addresses.all %}
+                                <div class="list-group-item list-group-item-action">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" 
+                                               name="selected_address" 
+                                               id="address-{{ address.id }}"
+                                               value="{{ address.id }}"
+                                               {% if address.is_default %}checked{% endif %}>
+                                        <label class="form-check-label" for="address-{{ address.id }}">
+                                            <strong>{{ address.address_name }}</strong><br>
+                                            {{ address.street_address }}, {{ address.city }}, 
+                                            {{ address.state }} - {{ address.zip_code }}, 
+                                            {{ address.country }}
+                                            {% if address.is_default %}
+                                                <span class="badge bg-primary">Default</span>
+                                            {% endif %}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">
+                                You don't have any saved addresses yet.
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Add New Address Toggle -->
+                    <!-- <div class="mb-3">
+                        <button class="btn btn-outline-primary" type="button" 
+                                data-bs-toggle="collapse" data-bs-target="#newAddressForm">
+                            <i class="bi bi-plus-lg"></i> Add New Address
+                        </button>
+                    </div> -->
+                    
+                    <!-- New Address Form (Collapsed by default) -->
+                    <div class="collapse" id="newAddressForm">
+                        <div class="card card-body mb-3">
+                            <h5>Add New Address</h5>
+                            <form id="new-address-form" method="post" action="{% url 'add_address' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{% url 'cart:checkout' %}">
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="address_name" class="form-label">Address Name</label>
+                                        <input type="text" class="form-control" id="address_name" 
+                                               name="address_name" placeholder="e.g., Home, Office" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check mt-4 pt-2">
+                                            <input class="form-check-input" type="checkbox" 
+                                                   id="is_default" name="is_default">
+                                            <label class="form-check-label" for="is_default">
+                                                Set as default address
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="street_address" class="form-label">Street Address</label>
+                                    <input type="text" class="form-control" id="street_address" 
+                                           name="street_address" placeholder="123 Main St" required>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="city" class="form-label">City</label>
+                                        <input type="text" class="form-control" id="city" 
+                                               name="city" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="state" class="form-label">State</label>
+                                        <input type="text" class="form-control" id="state" 
+                                               name="state" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="zip_code" class="form-label">ZIP/Postal Code</label>
+                                        <input type="text" class="form-control" id="zip_code" 
+                                               name="zip_code" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="country" class="form-label">Country</label>
+                                        <input type="text" class="form-control" id="country" 
+                                               name="country" required>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">Save Address</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Order Total & Payment -->
+        <div class="col-md-4">
+            <div class="card checkout-card">
+                <div class="card-header">
+                    <h4>Order Total</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th>Subtotal</th>
+                            <td>₹{{ cart.total_price }}</td>
+                        </tr>
+                        <tr>
+                            <th>Shipping</th>
+                            <td>₹0.00</td> <!-- Adjust as needed -->
+                        </tr>
+                        <tr class="fw-bold">
+                            <th>Total</th>
+                            <td>₹{{ cart.total_price }}</td>
+                        </tr>
+                    </table>
+                    
+                    <button id="rzp-button" class="btn btn-primary btn-block mt-3">
+                        Proceed to Payment
+                    </button>
+                    
+                    <a href="{% url 'cart:cart_summary' %}" class="btn btn-outline-secondary btn-block mt-2">
+                        Back to Cart
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Razorpay Payment Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+document.getElementById('rzp-button').onclick = function(e) {
+    e.preventDefault();
+    
+    // Validate that an address is selected
+    const selectedAddress = document.querySelector('input[name="selected_address"]:checked');
+    if (!selectedAddress) {
+        alert('Please select a shipping address or add a new one');
+        return;
+    }
+    
+    // Show loading state
+    this.disabled = true;
+    this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+    
+    // Create order via AJAX
+    fetch("{% url 'cart:create_cart_order' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+            'address_id': selectedAddress.value
+        }),
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+        
+        var options = {
+            "key": "{{ razorpay_key_id }}",
+            "amount": data.amount,
+            "currency": data.currency,
+            "name": "Your Store Name",
+            "description": "Order Payment",
+            "order_id": data.order_id,
+            "handler": function(response) {
+                // Handle successful payment
+                window.location.href = "{% url 'cart:order_success' %}";
+                
+            },
+            "prefill": {
+                "name": "{{ request.user.get_full_name }}",
+                "email": "{{ request.user.email }}",
+                "contact": "{{ request.user.phone_number|default:'' }}"
+            },
+            "theme": {
+                "color": "#3399cc"
+            },
+            modal: {
+        ondismiss: function() {
+            // Handle payment modal dismissal
+            if (confirm('Payment was cancelled. Do you want to try again?')) {
+                rzp1.open();
+            }
+        }
+    }
+        };
+        
+        var rzp = new Razorpay(options);
+        rzp.open();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while processing your payment.');
+    })
+    .finally(() => {
+        // Reset button state
+        document.getElementById('rzp-button').disabled = false;
+        document.getElementById('rzp-button').innerHTML = 'Proceed to Payment';
+    });
+};
+
+// Handle new address form submission with AJAX
+document.getElementById('new-address-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+    
+    fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Reload the page to show the new address
+            window.location.reload();
+        } else {
+            alert(data.error || 'Error saving address');
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Save Address';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while saving your address');
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Save Address';
+    });
+});
+</script>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+.checkout-card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: 0.25rem;
+    transition: all 0.3s ease;
+}
+
+.checkout-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.checkout-card .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eaecef;
+}
+
+#rzp-button {
+    padding: 10px 0;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+}
+
+.list-group-item {
+    cursor: pointer;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+.form-check-input:checked + .form-check-label {
+    font-weight: 500;
+}
+
+.bi {
+    margin-right: 5px;
+}
+</style>
+{% endblock %}

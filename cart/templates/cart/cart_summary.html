@@ -1,0 +1,498 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Your Shopping Cart{% endblock %}
+
+{% block extra_css %}
+<style>
+  :root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --light-bg: #f8f9fa;
+    --dark-bg: #343a40;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+  }
+
+  .cart-container {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+
+  .cart-header {
+    border-bottom: 2px solid var(--light-bg);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .cart-title {
+    font-weight: 700;
+    color: var(--dark-bg);
+  }
+
+  .cart-item {
+    border-bottom: 1px solid var(--light-bg);
+    padding: 1.5rem 0;
+  }
+
+  .cart-item:last-child {
+    border-bottom: none;
+  }
+
+  .product-img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    border-radius: 5px;
+    border: 1px solid var(--light-bg);
+  }
+
+  .product-title {
+    font-weight: 600;
+    color: var(--dark-bg);
+    margin-bottom: 0.5rem;
+  }
+
+  .product-price {
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+
+  .quantity-control {
+    display: flex;
+    align-items: center;
+  }
+
+  .quantity-input {
+    width: 60px;
+    text-align: center;
+    margin: 0 10px;
+    border: 1px solid var(--light-bg);
+    border-radius: 5px;
+    padding: 5px;
+  }
+
+  .quantity-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--light-bg);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .quantity-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  .remove-btn {
+    color: var(--danger-color);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .remove-btn:hover {
+    color: #c82333;
+  }
+
+  .summary-card {
+    background-color: var(--light-bg);
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .summary-title {
+    font-weight: 600;
+    color: var(--dark-bg);
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .total-row {
+    font-weight: 700;
+    font-size: 1.2rem;
+    border-top: 1px solid #dee2e6;
+    padding-top: 1rem;
+    margin-top: 1rem;
+  }
+
+  .checkout-btn {
+    width: 100%;
+    padding: 12px;
+    font-weight: 600;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    transition: all 0.3s;
+  }
+
+  .checkout-btn:hover {
+    background-color: #0069d9;
+    transform: translateY(-2px);
+  }
+
+  .empty-cart {
+    text-align: center;
+    padding: 3rem 0;
+  }
+
+  .empty-cart-icon {
+    font-size: 5rem;
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+  }
+
+  .empty-cart-text {
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+  }
+
+  .continue-shopping-btn {
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .continue-shopping-btn:hover {
+    background-color: #0069d9;
+    text-decoration: none;
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .product-img {
+      width: 80px;
+      height: 80px;
+    }
+    
+    .quantity-control {
+      margin-top: 1rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container cart-container">
+  <div class="cart-header">
+    <h1 class="cart-title">Shopping Cart</h1>
+  </div>
+
+  {% if cart.items.all %}
+  <div class="row">
+    <div class="col-lg-8">
+      {% for item in cart.items.all %}
+      <div class="cart-item row">
+        <div class="col-md-2">
+          <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="product-img">
+        </div>
+        <div class="col-md-4">
+          <h5 class="product-title">{{ item.product.name }}</h5>
+          <p class="product-price">₹ {{ item.product.price }}</p>
+        </div>
+        <div class="col-md-4">
+          <div class="quantity-control">
+            <button class="quantity-btn minus-btn" data-item-id="{{ item.id }}">-</button>
+            <input type="number" class="quantity-input" value="{{ item.quantity }}" min="1" data-item-id="{{ item.id }}">
+            <button class="quantity-btn plus-btn" data-item-id="{{ item.id }}">+</button>
+          </div>
+        </div>
+        <div class="col-md-2 text-right">
+          <p class="product-price item-total" data-item-id="{{ item.id }}">₹ {{ item.total_price }}</p>
+          <button class="remove-btn" data-item-id="{{ item.id }}">
+            <i class="fas fa-trash"></i> Remove
+          </button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="col-lg-4">
+      <div class="summary-card">
+        <h3 class="summary-title">Order Summary</h3>
+        <div class="summary-row">
+          <span>Items ({{ cart.total_items }}):</span>
+          <span class="cart-total-price" id="cart_total_display">₹ {{ cart.total_price }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping:</span>
+          <span>FREE</span>
+        </div>
+        <div class="summary-row">
+          <span>Tax:</span>
+          <span>₹ 0.00</span>
+        </div>
+        <div class="summary-row total-row">
+          <span>Total:</span>
+          <span class="cart-total-price" id="cart_total_display">₹ {{ cart.total_price }}</span>
+        </div>
+        <div class="text-right mt-4">
+    <a href="{% url 'cart:checkout' %}" class="btn btn-primary btn-lg">
+        Proceed to Checkout
+    </a>
+</div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-cart">
+    <div class="empty-cart-icon">
+      <i class="fas fa-shopping-cart"></i>
+    </div>
+    <h3 class="empty-cart-text">Your cart is empty</h3>
+    <a href="{% url 'product_list' %}" class="continue-shopping-btn">
+      Continue Shopping
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+<!-- In your base.html -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+  // Update cart item quantity
+  function updateCartItem(itemId, quantity) {
+    $.ajax({
+      type: "POST",
+      url: "{% url 'cart:cart_update' %}",
+      data: {
+        item_id: itemId,
+        quantity: quantity,
+        csrfmiddlewaretoken: "{{ csrf_token }}"
+      },
+      success: function(response) {
+        if (response.success) {
+          // Update item total
+          $(`.item-total[data-item-id="${itemId}"]`).text('₹ ' + response.item_total);
+          
+          // Update cart totals
+          $("#cart_quantity .badge").text(response.cart_total);
+          $(".cart-total-price").text('₹ ' + response.cart_total_price);
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error(error);
+      }
+    });
+  }
+
+  // Plus button click
+  $(document).on('click', '.plus-btn', function() {
+    const itemId = $(this).data('item-id');
+    const input = $(`.quantity-input[data-item-id="${itemId}"]`);
+    let quantity = parseInt(input.val()) + 1;
+    input.val(quantity);
+    updateCartItem(itemId, quantity);
+  });
+
+  // Minus button click
+  $(document).on('click', '.minus-btn', function() {
+    const itemId = $(this).data('item-id');
+    const input = $(`.quantity-input[data-item-id="${itemId}"]`);
+    let quantity = parseInt(input.val()) - 1;
+    
+    if (quantity < 1) quantity = 1;
+    
+    input.val(quantity);
+    updateCartItem(itemId, quantity);
+  });
+
+  // Quantity input change
+  $(document).on('change', '.quantity-input', function() {
+    const itemId = $(this).data('item-id');
+    let quantity = parseInt($(this).val());
+    
+    if (quantity < 1) {
+      quantity = 1;
+      $(this).val(1);
+    }
+    
+    updateCartItem(itemId, quantity);
+  });
+
+  // Remove item
+  $(document).on('click', '.remove-btn', function() {
+    const itemId = $(this).data('item-id');
+    
+    $.ajax({
+      type: "POST",
+      url: "{% url 'cart:cart_delete' %}",
+      data: {
+        item_id: itemId,
+        csrfmiddlewaretoken: "{{ csrf_token }}"
+      },
+      success: function(response) {
+        if (response.success) {
+          // Remove item from DOM
+          $(`.cart-item[data-item-id="${itemId}"]`).remove();
+          
+          // Update cart totals
+          $("#cart_quantity .badge").text(response.cart_total);
+          $(".cart-total-price").text('₹ ' + response.cart_total_price);
+          
+          // If cart is empty, reload the page to show empty cart message
+          if (response.cart_total === 0) {
+            location.reload();
+          }
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error(error);
+      }
+    });
+  });
+
+  // Add to cart from product list/detail
+  $(document).on("click", "#add-cart", function(e) {
+    e.preventDefault();
+    const productId = $(this).val();
+    
+    $.ajax({
+      type: "POST",
+      url: "{% url 'cart:cart_add' %}",
+      data: {
+        product_id: productId,
+        csrfmiddlewaretoken: "{{ csrf_token }}"
+      },
+      success: function(response) {
+        if (response.success) {
+          // Update cart count in navbar
+          const cartBadge = $("#cart_quantity .badge");
+          
+          if (cartBadge.length) {
+            cartBadge.text(response.cart_total);
+          } else {
+            $("#cart_quantity").html(`
+              <i class="fas fa-shopping-cart"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                ${response.cart_total}
+                <span class="visually-hidden">Cart</span>
+              </span>
+            `);
+          }
+          
+          // Show success message
+          alert("Product added to cart!");
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error(error);
+      }
+    });
+  });
+});
+
+// In your cart template or main JS file
+// document.getElementById('rzp-button1').addEventListener('click', async function() {
+//   try {
+//       const response = await fetch('/cart/create_cart_order/', {
+//           method: 'POST',
+//           headers: {
+//               'Content-Type': 'application/json',
+//               'X-CSRFToken': getCookie('csrftoken'),
+//           },
+//           credentials: 'include'
+//       });
+      
+//       if (!response.ok) {
+//           const error = await response.json();
+//           throw new Error(error.error || 'Failed to create order');
+//       }
+      
+//       const data = await response.json();
+      
+//       const options = {
+//           key: data.razorpay_key_id,
+//           amount: data.amount,
+//           currency: data.currency,
+//           name: "Your Store Name",
+//           description: "Cart Payment",
+//           order_id: data.order_id,
+//           handler: async function(response) {
+//               // Handle successful payment
+//               const callbackResponse = await fetch('/cart/payment-callback/', {
+//                   method: 'POST',
+//                   headers: {
+//                       'Content-Type': 'application/json',
+//                       'X-CSRFToken': getCookie('csrftoken'),
+//                   },
+//                   body: JSON.stringify({
+//                       razorpay_payment_id: response.razorpay_payment_id,
+//                       razorpay_order_id: response.razorpay_order_id,
+//                       razorpay_signature: response.razorpay_signature
+//                   }),
+//                   credentials: 'include'
+//               });
+              
+//               const result = await callbackResponse.json();
+//               if (result.status === 'success') {
+//                   window.location.href = '/cart/order-success/';  // Redirect to success page
+//               } else {
+//                   alert('Payment verification failed');
+//               }
+//           },
+//           prefill: {
+//               name: "Swarnadip Ghosh", //"{{ request.user.get_full_name }}",
+//               email: "goldy.g2001@gmail.com", //"{{ request.user.email }}",
+//               contact: "{{ request.user.phone_number|default:'8101065218' }}"
+//           },
+//           theme: {
+//               color: "#3399cc"
+//           }
+//       };
+      
+//       const rzp1 = new Razorpay(options);
+//       rzp1.open();
+      
+//   } catch (error) {
+//       console.error('Payment error:', error);
+//       alert('Error: ' + error.message);
+//   }
+// });
+
+// Helper function to get CSRF token
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
+</script>
+{% endblock %}
